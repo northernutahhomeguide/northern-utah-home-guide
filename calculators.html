@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Real Estate Calculators: Seller Net Sheet, Mortgage, Affordability | Christina Cacciacarne</title>
+<meta name="description" content="Free real estate calculators: seller net proceeds, monthly mortgage payment, how much home you can afford, rent vs. buy and rental cash flow.">
+<link rel="canonical" href="https://northernutahhomeguide.com/calculators.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Real Estate Calculators: Seller Net Sheet, Mortgage, Affordability | Christina Cacciacarne">
+<meta property="og:description" content="Free real estate calculators: seller net proceeds, monthly mortgage payment, how much home you can afford, rent vs. buy and rental cash flow.">
+<meta property="og:url" content="https://northernutahhomeguide.com/calculators.html">
+<meta property="og:image" content="https://northernutahhomeguide.com/img/christina-cacciacarne.jpg">
+<link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Figtree:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "RealEstateAgent", "name": "Christina Cacciacarne", "url": "https://northernutahhomeguide.com/", "image": "https://northernutahhomeguide.com/img/christina-cacciacarne.jpg", "slogan": "Experience you can lean on.", "parentOrganization": {"@type": "RealEstateAgent", "name": "KW Unite Keller Williams"}, "areaServed": [{"@type": "City", "name": "Logan, Utah"}, {"@type": "City", "name": "North Logan, Utah"}, {"@type": "City", "name": "Hyde Park, Utah"}, {"@type": "City", "name": "Smithfield, Utah"}, {"@type": "City", "name": "Providence, Utah"}, {"@type": "City", "name": "Nibley, Utah"}, {"@type": "City", "name": "Hyrum, Utah"}, {"@type": "City", "name": "Brigham City, Utah"}, {"@type": "City", "name": "Ogden, Utah"}, {"@type": "City", "name": "North Ogden, Utah"}, {"@type": "City", "name": "Garden City, Utah"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://northernutahhomeguide.com/"}, {"@type": "ListItem", "position": 2, "name": "Run the numbers before you decide", "item": "https://northernutahhomeguide.com/calculators.html"}]}</script>
+</head>
+<body data-root="">
+<header class="topbar">
+  <div class="wrap">
+    <a class="brand" href="index.html"><b>Christina Cacciacarne</b><span>KW Unite · Keller Williams</span></a>
+    <nav class="nav" aria-label="Main"><a href="areas/index.html">Areas</a><a href="sellers.html">Sellers</a><a href="buyers.html">Buyers</a><a href="investors.html">Investors</a><a href="calculators.html" aria-current="page">Calculators</a></nav>
+    <a class="btn btn-gold btn-sm" href="https://www.kw.com/" target="_blank" rel="noopener">Search homes</a>
+  </div>
+  <nav class="subnav" aria-label="Main (mobile)"><div class="wrap"><a href="areas/index.html">Areas</a><a href="sellers.html">Sellers</a><a href="buyers.html">Buyers</a><a href="investors.html">Investors</a><a href="calculators.html" aria-current="page">Calculators</a></div></nav>
+</header>
+<main>
+<section class="pagehead"><div class="wrap">
+  <nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">Home</a> › <span>Run the numbers before you decide</span></nav>
+  <div class="eyebrow" style="color:var(--gold-hero)">Calculators</div>
+  <h1>Run the numbers before you decide</h1>
+  <p class="statement">Each calculator opens with example figures. Change any box and the results update as you type. These are estimates; I&#x27;ll run exact numbers with you for your situation.</p>
+</div></section>
+<section class="block" id="tools">
+  <div class="wrap">
+    
+    <div class="panel">
+      <div class="tabs" role="tablist" id="tabs">
+        <button class="tab" role="tab" data-tab="net" aria-selected="true">Seller net sheet</button>
+        <button class="tab" role="tab" data-tab="mortgage" aria-selected="false">Monthly payment</button>
+        <button class="tab" role="tab" data-tab="afford" aria-selected="false">How much can I afford?</button>
+        <button class="tab" role="tab" data-tab="rentbuy" aria-selected="false">Rent vs. buy</button>
+        <button class="tab" role="tab" data-tab="invest" aria-selected="false">Rental cash flow</button>
+      </div>
+
+      <div class="tool" data-panel="net">
+        <div class="inputs">
+          <div class="field full"><label for="n_price">Expected sale price ($)</label><input type="number" id="n_price" value="485000" min="0" step="1000"></div>
+          <div class="field"><label for="n_payoff">Mortgage payoff ($)</label><input type="number" id="n_payoff" value="262000" min="0" step="1000"></div>
+          <div class="field"><label for="n_heloc">Other liens / HELOC ($)</label><input type="number" id="n_heloc" value="0" min="0" step="500"></div>
+          <div class="field"><label for="n_list">Listing commission (%)</label><input type="number" id="n_list" value="3" min="0" step="0.25"></div>
+          <div class="field"><label for="n_buy">Buyer-agent compensation (%)</label><input type="number" id="n_buy" value="2.5" min="0" step="0.25"></div>
+          <div class="field"><label for="n_title">Title &amp; settlement fees ($)</label><input type="number" id="n_title" value="1900" min="0" step="50"></div>
+          <div class="field"><label for="n_conc">Seller concessions ($)</label><input type="number" id="n_conc" value="5000" min="0" step="500"></div>
+          <div class="field"><label for="n_tax">Property tax proration ($)</label><input type="number" id="n_tax" value="1650" min="0" step="50"></div>
+          <div class="field"><label for="n_rep">Repairs &amp; prep ($)</label><input type="number" id="n_rep" value="2500" min="0" step="100"></div>
+          <div class="field full"><label for="n_other">HOA, water share transfer or other fees ($)</label><input type="number" id="n_other" value="350" min="0" step="50"></div>
+        </div>
+        <div class="result">
+          <div class="eyebrow">Estimated cash to you at settlement</div>
+          <div class="big num" id="n_out"></div>
+          <div class="stack" id="n_stack"></div>
+          <div class="legend" id="n_legend"></div>
+          <div class="lines num" id="n_lines"></div>
+          <p class="note">Utah has no real estate transfer tax. Commission is negotiable and set in your listing agreement. Buyer-agent compensation is optional and negotiated with each offer.</p>
+        </div>
+      </div>
+
+      <div class="tool" data-panel="mortgage" hidden>
+        <div class="inputs">
+          <div class="field full"><label for="m_price">Home price ($)</label><input type="number" id="m_price" value="450000" min="0" step="1000"></div>
+          <div class="field"><label for="m_down">Down payment (%)</label><input type="number" id="m_down" value="10" min="0" max="100" step="0.5"></div>
+          <div class="field"><label for="m_rate">Interest rate (%)</label><input type="number" id="m_rate" value="6.5" min="0" step="0.125"></div>
+          <div class="field"><label for="m_term">Loan term</label><select id="m_term"><option value="30">30 years</option><option value="20">20 years</option><option value="15">15 years</option></select></div>
+          <div class="field"><label for="m_tax">Property tax ($/yr)</label><input type="number" id="m_tax" value="2600" min="0" step="50"></div>
+          <div class="field"><label for="m_ins">Homeowners insurance ($/yr)</label><input type="number" id="m_ins" value="1500" min="0" step="50"></div>
+          <div class="field"><label for="m_hoa">HOA ($/mo)</label><input type="number" id="m_hoa" value="0" min="0" step="5"></div>
+          <div class="field full"><label for="m_pmi">Mortgage insurance if under 20% down (%/yr of loan)</label><input type="number" id="m_pmi" value="0.5" min="0" step="0.05"></div>
+        </div>
+        <div class="result">
+          <div class="eyebrow">Estimated monthly payment</div>
+          <div class="big num" id="m_out"></div>
+          <div class="stack" id="m_stack"></div>
+          <div class="legend" id="m_legend"></div>
+          <div class="lines num" id="m_lines"></div>
+          <p class="note">Utah's primary-residence exemption taxes 55% of a home's value, so property tax varies widely by town. Check the county assessor for a specific address.</p>
+        </div>
+      </div>
+
+      <div class="tool" data-panel="afford" hidden>
+        <div class="inputs">
+          <div class="field full"><label for="a_inc">Household gross income ($/yr)</label><input type="number" id="a_inc" value="110000" min="0" step="1000"></div>
+          <div class="field"><label for="a_debt">Monthly debt payments ($)</label><input type="number" id="a_debt" value="650" min="0" step="25"></div>
+          <div class="field"><label for="a_downamt">Cash for down payment ($)</label><input type="number" id="a_downamt" value="40000" min="0" step="1000"></div>
+          <div class="field"><label for="a_rate">Interest rate (%)</label><input type="number" id="a_rate" value="6.5" min="0" step="0.125"></div>
+          <div class="field"><label for="a_dti">Comfort level</label><select id="a_dti"><option value="36">Conservative (36% of income)</option><option value="43" selected>Typical (43% of income)</option><option value="50">Stretch (50% of income)</option></select></div>
+          <div class="field"><label for="a_tx">Taxes + insurance ($/mo)</label><input type="number" id="a_tx" value="350" min="0" step="10"></div>
+        </div>
+        <div class="result">
+          <div class="eyebrow">Approximate price range</div>
+          <div class="big num" id="a_out"></div>
+          <div class="lines num" id="a_lines"></div>
+          <p class="note">Lenders look at total monthly debt as a share of gross income. A local lender's pre-approval is the real number; I'm happy to connect you with one.</p>
+        </div>
+      </div>
+
+      <div class="tool" data-panel="rentbuy" hidden>
+        <div class="inputs">
+          <div class="field"><label for="r_rent">Current rent ($/mo)</label><input type="number" id="r_rent" value="1850" min="0" step="25"></div>
+          <div class="field"><label for="r_rentup">Rent increase (%/yr)</label><input type="number" id="r_rentup" value="3" step="0.5"></div>
+          <div class="field"><label for="r_price">Home price ($)</label><input type="number" id="r_price" value="420000" min="0" step="1000"></div>
+          <div class="field"><label for="r_down">Down payment (%)</label><input type="number" id="r_down" value="10" min="0" max="100" step="0.5"></div>
+          <div class="field"><label for="r_rate">Interest rate (%)</label><input type="number" id="r_rate" value="6.5" step="0.125"></div>
+          <div class="field"><label for="r_app">Home value growth (%/yr)</label><input type="number" id="r_app" value="3.5" step="0.5"></div>
+          <div class="field"><label for="r_own">Taxes, insurance, upkeep ($/mo)</label><input type="number" id="r_own" value="650" min="0" step="25"></div>
+          <div class="field"><label for="r_yrs">Years you'd stay</label><input type="number" id="r_yrs" value="7" min="1" max="30" step="1"></div>
+        </div>
+        <div class="result">
+          <div class="eyebrow">After <span id="r_yrslbl"></span> years, buying leaves you</div>
+          <div class="big num" id="r_out"></div>
+          <div class="lines num" id="r_lines"></div>
+          <p class="note">Compares total rent paid against the cost of owning (interest, upkeep, taxes, insurance and about 7% to sell), minus the equity you build. Down payment is counted as your money either way.</p>
+        </div>
+      </div>
+
+      <div class="tool" data-panel="invest" hidden>
+        <div class="inputs">
+          <div class="field full"><label for="i_price">Purchase price ($)</label><input type="number" id="i_price" value="380000" min="0" step="1000"></div>
+          <div class="field"><label for="i_down">Down payment (%)</label><input type="number" id="i_down" value="25" min="0" max="100" step="1"></div>
+          <div class="field"><label for="i_rate">Interest rate (%)</label><input type="number" id="i_rate" value="7" step="0.125"></div>
+          <div class="field"><label for="i_close">Closing &amp; rehab ($)</label><input type="number" id="i_close" value="9000" min="0" step="500"></div>
+          <div class="field"><label for="i_rent">Monthly rent ($)</label><input type="number" id="i_rent" value="2350" min="0" step="25"></div>
+          <div class="field"><label for="i_vac">Vacancy (%)</label><input type="number" id="i_vac" value="5" min="0" step="1"></div>
+          <div class="field"><label for="i_mgmt">Management (%)</label><input type="number" id="i_mgmt" value="8" min="0" step="1"></div>
+          <div class="field"><label for="i_exp">Taxes + insurance ($/mo)</label><input type="number" id="i_exp" value="330" min="0" step="10"></div>
+          <div class="field"><label for="i_maint">Repairs &amp; capex ($/mo)</label><input type="number" id="i_maint" value="200" min="0" step="10"></div>
+        </div>
+        <div class="result">
+          <div class="eyebrow">Monthly cash flow</div>
+          <div class="big num" id="i_out"></div>
+          <div class="lines num" id="i_lines"></div>
+          <p class="note">Investment properties are taxed at full value in Utah (no primary-residence exemption), so use a non-owner-occupied tax estimate. Short-term rental rules vary by city.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="block" id="value">
+  <div class="wrap">
+    <div class="contact">
+      <div style="display:grid;gap:14px;align-content:start">
+        <figure class="mini-portrait"><img src="img/christina-portrait.jpg" alt="Christina Cacciacarne" width="480" height="600" loading="lazy"></figure>
+        <div class="eyebrow" style="color:var(--gold-hero)">Home value &amp; questions</div>
+        <h2>What's my home worth?</h2>
+        <p class="lede">Online estimates miss what makes your home different. Tell me about it and I'll prepare a real market analysis based on recent sales near you, at no cost.</p>
+        <div style="display:grid;gap:6px;margin-top:6px">
+          <div>Call or text <b class="ph" id="phoneTxt">(435) 000-0000</b></div>
+          <div>Email <b class="ph" id="emailTxt">christina@northernutahhomeguide.com</b></div>
+          <div class="actions" style="margin-top:8px"><a class="btn btn-gold btn-sm kw" href="https://www.kw.com/" target="_blank" rel="noopener">Search all MLS listings</a></div>
+        </div>
+      </div>
+      <form id="valueForm" style="display:grid;gap:12px" novalidate>
+        <div class="row">
+          <div class="field"><label for="v_name">Name</label><input type="text" id="v_name" required></div>
+          <div class="field"><label for="v_contact">Phone or email</label><input type="text" id="v_contact" required></div>
+        </div>
+        <div class="field"><label for="v_addr">Property address</label><input type="text" id="v_addr"></div>
+        <div class="row">
+          <div class="field"><label for="v_type">I'm looking to</label><select id="v_type"><option>Sell</option><option>Buy</option><option>Buy and sell</option><option>Invest</option><option>Build new</option></select></div>
+          <div class="field"><label for="v_when">Timeline</label><select id="v_when"><option>0–3 months</option><option>3–6 months</option><option>6–12 months</option><option>Just curious</option></select></div>
+        </div>
+        <div class="field"><label for="v_msg">Anything I should know?</label><textarea id="v_msg" placeholder="Updates, square footage, questions"></textarea></div>
+        <button class="btn btn-gold" type="submit">Prepare my request</button>
+        <p class="note" id="v_err" style="color:var(--gold-hero)" role="alert"></p>
+        <div id="v_done" hidden style="display:grid;gap:8px">
+          <div class="summary" id="v_text"></div>
+          <div class="actions"><button class="btn btn-gold btn-sm" type="button" id="v_copy">Copy request</button><span class="note" id="v_copied" role="status" style="color:var(--hero-muted)"></span></div>
+          <p class="note" style="color:var(--hero-muted)">Paste it into a text or email to the number or address above.</p>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+<footer class="wrap">
+  <nav class="footareas" aria-label="Areas"><a href="areas/logan.html">Logan</a> · <a href="areas/north-logan.html">North Logan</a> · <a href="areas/hyde-park.html">Hyde Park</a> · <a href="areas/smithfield.html">Smithfield</a> · <a href="areas/providence.html">Providence</a> · <a href="areas/river-heights.html">River Heights</a> · <a href="areas/nibley.html">Nibley</a> · <a href="areas/millville.html">Millville</a> · <a href="areas/hyrum.html">Hyrum</a> · <a href="areas/wellsville.html">Wellsville</a> · <a href="areas/north-cache-valley.html">North Cache Valley</a> · <a href="areas/mendon-paradise.html">Mendon &amp; Paradise</a> · <a href="areas/brigham-city-perry.html">Brigham City &amp; Perry</a> · <a href="areas/ogden.html">Ogden</a> · <a href="areas/north-ogden.html">North Ogden</a> · <a href="areas/pleasant-view.html">Pleasant View</a> · <a href="areas/harrisville.html">Harrisville</a> · <a href="areas/roy.html">Roy</a> · <a href="areas/south-ogden.html">South Ogden</a> · <a href="areas/riverdale.html">Riverdale</a> · <a href="areas/west-haven.html">West Haven</a> · <a href="areas/ogden-valley.html">Ogden Valley</a> · <a href="areas/west-weber.html">West Weber</a> · <a href="areas/garden-city-bear-lake.html">Garden City &amp; Bear Lake</a> · <a href="areas/laketown-rich-county.html">Laketown, Randolph &amp; Woodruff</a></nav>
+  <div><b>Christina Cacciacarne</b>, Real Estate Agent · <b>KW Unite Keller Williams</b></div>
+  <div class="eho"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 10h2v10h16V10h2z" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8 13h8M8 16h8" stroke="currentColor" stroke-width="1.8"/></svg>Equal Housing Opportunity. Each office is independently owned and operated.</div>
+  <div>Town information is compiled from public sources for general reference and may change. Verify school boundaries, utilities, zoning and fees with the city, district or county. Calculator results are estimates, not loan or tax advice.</div>
+</footer>
+<script>window.SITE_KW="https://www.kw.com/";</script>
+<script src="site.js"></script>
+</body>
+</html>
