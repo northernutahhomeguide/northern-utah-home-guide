@@ -2,7 +2,7 @@ const TOWNS = window.SITE_TOWNS||[];
 const OUTDOORS = window.SITE_OUTDOORS||[];
 const PAGE_OF = window.SITE_PAGES||{};
 const ROOT = document.body.dataset.root||"";
-const KW_URL = window.SITE_KW||"https://www.kw.com/";
+const KW_URL = window.SITE_KW||"https://christinacacciacarne.kw.com/";
 const REGIONS = [
   {key:"Cache Valley",label:"Cache Valley",color:"var(--r-cache)"},
   {key:"Bear Lake & Rich County",label:"Bear Lake",color:"var(--r-bear)"},
