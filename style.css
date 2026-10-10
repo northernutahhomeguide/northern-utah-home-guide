@@ -1,26 +1,26 @@
-/* Layout: olive hero with the promise, then a town explorer (map + accordions), a tabbed calculator bench, and folded guides — everything collapses so the page stays calm. */
+/* Palette: cream background, taupe lettering, plum (burgundy) boxes, antique-gold accents, with a subtle plaster/velvet texture. Layout: plum hero with the promise, then a town explorer (map + accordions), a tabbed calculator bench, and folded guides — everything collapses so the page stays calm. */
 :root{
-  --bg:#F5F7EE; --surface:#FFFFFF; --surface-2:#EDF1E0; --ink:#21261A; --muted:#5C6450; --line:#DCE2CA;
-  --olive:#56662A; --olive-ink:#FFFFFF; --hero:#323C17; --hero-ink:#F3F5E8; --hero-muted:#C9D2A9;
-  --gold:#C2603A; --gold-soft:#F6E0D4; --gold-hero:#EE9C77; --on-gold:#FFFFFF; --coral:#9C5A78; --teal:#2A9A93; --sage:#8DA246;
-  --r-cache:#56662A; --r-bear:#2A9A93; --r-box:#C2603A; --r-weber:#4F6FA0;
-  --shadow:0 1px 2px rgba(40,48,20,.06),0 8px 24px rgba(40,48,20,.07);
+  --bg:#EAE0CF; --surface:#F4EEE3; --surface-2:#E2D6C3; --ink:#3F332B; --muted:#66584B; --line:#D3C5AF; --heading:#6E5C4B;
+  --olive:#5B1E2B; --olive-ink:#F4EEE3; --hero:#4A1A24; --hero-ink:#F1E8D8; --hero-muted:#D2BFA6;
+  --gold:#A88550; --gold-text:#7A5D30; --gold-soft:#EADCC1; --gold-hero:#D4B27A; --on-gold:#2B1218; --coral:#9A3B3B; --teal:#5E7480; --sage:#A88550;
+  --r-cache:#6E2A3A; --r-bear:#5E7480; --r-box:#A88550; --r-weber:#7D6B58;
+  --shadow:0 1px 2px rgba(60,40,30,.06),0 10px 28px rgba(60,40,30,.09);
   --display:"Cormorant Garamond","Iowan Old Style","Palatino Linotype",Georgia,serif;
   --body:"Figtree","Segoe UI",system-ui,-apple-system,sans-serif;
   color-scheme:light;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#14170F; --surface:#1D2116; --surface-2:#252B1B; --ink:#EDF0E2; --muted:#A8B093; --line:#323a25;
-  --olive:#AFC266; --olive-ink:#16190F; --hero:#20270F; --hero-ink:#F0F3E2; --hero-muted:#B8C394;
-  --gold:#E8875F; --gold-soft:#3A2419; --gold-hero:#F0A585; --on-gold:#1E120C; --coral:#C98BA8; --teal:#4CC0B8; --sage:#A9BE5E;
-  --r-cache:#AFC266; --r-bear:#4CC0B8; --r-box:#E8875F; --r-weber:#8FA9D6;
-  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25); color-scheme:dark}}
+  --bg:#1C1214; --surface:#261A1D; --surface-2:#2F2125; --ink:#EFE6D6; --muted:#BFAE98; --line:#3E2D31; --heading:#D9C7AE;
+  --olive:#D4B27A; --olive-ink:#1C1214; --hero:#3A1520; --hero-ink:#F1E8D8; --hero-muted:#CDB9A0;
+  --gold:#D4B27A; --gold-text:#D4B27A; --gold-soft:#3A2A1C; --gold-hero:#E0C08A; --on-gold:#2B1218; --coral:#E08A8A; --teal:#93A9B4; --sage:#D4B27A;
+  --r-cache:#C9798B; --r-bear:#93A9B4; --r-box:#D4B27A; --r-weber:#BFA88E;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.3); color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#14170F; --surface:#1D2116; --surface-2:#252B1B; --ink:#EDF0E2; --muted:#A8B093; --line:#323a25;
-  --olive:#AFC266; --olive-ink:#16190F; --hero:#20270F; --hero-ink:#F0F3E2; --hero-muted:#B8C394;
-  --gold:#E8875F; --gold-soft:#3A2419; --gold-hero:#F0A585; --on-gold:#1E120C; --coral:#C98BA8; --teal:#4CC0B8; --sage:#A9BE5E;
-  --r-cache:#AFC266; --r-bear:#4CC0B8; --r-box:#E8875F; --r-weber:#8FA9D6;
-  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25); color-scheme:dark}
+  --bg:#1C1214; --surface:#261A1D; --surface-2:#2F2125; --ink:#EFE6D6; --muted:#BFAE98; --line:#3E2D31; --heading:#D9C7AE;
+  --olive:#D4B27A; --olive-ink:#1C1214; --hero:#3A1520; --hero-ink:#F1E8D8; --hero-muted:#CDB9A0;
+  --gold:#D4B27A; --gold-text:#D4B27A; --gold-soft:#3A2A1C; --gold-hero:#E0C08A; --on-gold:#2B1218; --coral:#E08A8A; --teal:#93A9B4; --sage:#D4B27A;
+  --r-cache:#C9798B; --r-bear:#93A9B4; --r-box:#D4B27A; --r-weber:#BFA88E;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.3); color-scheme:dark}
 
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
@@ -277,3 +277,45 @@ img{max-width:100%;height:auto}
 article.town{scroll-margin-top:90px}
 
 .detail h3.sublabel{font-family:var(--body);font-size:.74rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+
+
+/* ===== Plum / taupe / cream theme: texture and character ===== */
+:root{
+  --tex-grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .11 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --tex-mottle:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='m'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.2' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 .5 0 0 0 -.18'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23m)'/%3E%3C/svg%3E");
+  --tex-shade:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='d'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.2' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -.5 0 0 0 .22'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23d)'/%3E%3C/svg%3E");
+  --tex-fleck:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='d'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.2' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -.3 0 0 0 .12'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23d)'/%3E%3C/svg%3E");
+  --tex-plaster:radial-gradient(120% 60% at 15% 0%,rgba(255,255,255,.35),transparent 60%),radial-gradient(90% 50% at 100% 100%,rgba(110,92,75,.10),transparent 65%);
+}
+/* cream plaster page */
+body{background-color:var(--bg);background-image:var(--tex-grain),var(--tex-fleck),var(--tex-plaster)}
+/* plum velvet boxes */
+.hero,.pagehead,.contact{background-color:var(--hero);background-image:var(--tex-grain),var(--tex-mottle),var(--tex-shade),radial-gradient(80% 90% at 10% 0%,rgba(255,220,200,.10),transparent 60%),radial-gradient(70% 80% at 100% 100%,rgba(0,0,0,.25),transparent 70%)}
+.hero::after,.pagehead::after{background:radial-gradient(circle,color-mix(in srgb,var(--gold-hero) 18%,transparent),transparent 65%)}
+/* taupe lettering, engraved feel */
+h1,h2,h3{font-weight:500;letter-spacing:.01em}
+h2,h3{color:var(--heading)}
+.hero h1,.pagehead h1,.contact h2{color:var(--hero-ink)}
+.eyebrow{color:var(--gold-text);letter-spacing:.32em;font-weight:600}
+.hero .eyebrow,.pagehead .eyebrow,.contact .eyebrow{color:var(--gold-hero)}
+.brand b{letter-spacing:.06em;color:var(--olive)}
+.brand span{letter-spacing:.28em}
+/* gold hairline under section titles */
+section.block h2::after{content:"";display:block;width:56px;height:1px;margin-top:14px;background:var(--gold)}
+.hero h2::after,.contact h2::after,.pagehead h2::after{display:none}
+/* alternate sections: a light taupe plaster band for rhythm */
+section.block:nth-of-type(even){background-color:var(--surface-2);background-image:var(--tex-grain),var(--tex-fleck);border-block:1px solid var(--line);padding-block:72px 64px}
+/* cards: cream with a gold hairline; plum on hover */
+.panel,.areacard,.pathcard{border-color:color-mix(in srgb,var(--gold) 45%,var(--line))}
+.areacard,.pathcard{transition:transform .15s ease,background .2s,color .2s,border-color .2s}
+.areacard:hover,.pathcard:hover{background-color:var(--hero);background-image:var(--tex-grain),var(--tex-mottle);color:var(--hero-ink);border-color:var(--gold)}
+.areacard:hover *,.pathcard:hover *{color:inherit}
+.areacard:hover small,.pathcard:hover small{color:var(--gold-hero)}
+/* buttons */
+.btn-olive{background-image:var(--tex-grain)}
+.btn-gold{background-image:linear-gradient(180deg,rgba(255,255,255,.18),rgba(0,0,0,.06))}
+.tab[aria-selected="true"]{color:var(--olive)}
+.big{color:var(--olive)}
+.cred b{color:var(--gold-hero)}
+.portrait,.mini-portrait{border-color:var(--gold-hero)}
+footer{border-top:1px solid color-mix(in srgb,var(--gold) 40%,var(--line))}
