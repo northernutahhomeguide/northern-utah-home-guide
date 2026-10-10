@@ -270,6 +270,9 @@ article.town{scroll-margin-top:90px}
 
 /* ===== Plum / taupe / cream theme: texture and character ===== */
 :root{
+  --tex-ven-light:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1600' height='1000' viewBox='0 0 1600 1000' preserveAspectRatio='none'%3E%3Cfilter id='vl' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.0016 .0042' numOctaves='5' seed='21'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 .92 0 0 0 0 .9 .6 0 0 0 -.27'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23vl)'/%3E%3C/svg%3E");
+  --tex-ven-dark:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1600' height='1000' viewBox='0 0 1600 1000' preserveAspectRatio='none'%3E%3Cfilter id='vd' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.0022 .0055' numOctaves='5' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .08 0 0 0 0 .02 0 0 0 0 .04 -.85 0 0 0 .47'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23vd)'/%3E%3C/svg%3E");
+  --tex-ven-fine:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240' preserveAspectRatio='none'%3E%3Cfilter id='vf' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' seed='1'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23vf)'/%3E%3C/svg%3E");
   --tex-grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .11 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   --tex-mottle:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='m'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.2' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 .5 0 0 0 -.18'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23m)'/%3E%3C/svg%3E");
   --tex-shade:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='d'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.2' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -.5 0 0 0 .22'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23d)'/%3E%3C/svg%3E");
@@ -279,7 +282,7 @@ article.town{scroll-margin-top:90px}
 /* cream plaster page */
 body{background-color:var(--bg);background-image:var(--tex-grain),var(--tex-fleck),var(--tex-plaster)}
 /* plum velvet boxes */
-.hero,.pagehead,.contact{background-color:var(--hero);background-image:var(--tex-grain),var(--tex-mottle),var(--tex-shade),radial-gradient(80% 90% at 10% 0%,rgba(255,220,200,.10),transparent 60%),radial-gradient(70% 80% at 100% 100%,rgba(0,0,0,.25),transparent 70%)}
+.hero,.pagehead,.contact{background-color:var(--hero);background-image:var(--tex-ven-fine),linear-gradient(115deg,transparent 30%,rgba(255,235,220,.07) 45%,transparent 60%),var(--tex-ven-light),var(--tex-ven-dark),radial-gradient(70% 80% at 100% 100%,rgba(0,0,0,.22),transparent 70%);background-size:240px 240px,100% 100%,cover,cover,100% 100%;background-repeat:repeat,no-repeat,no-repeat,no-repeat,no-repeat}
 .hero::after,.pagehead::after{background:radial-gradient(circle,color-mix(in srgb,var(--gold-hero) 18%,transparent),transparent 65%)}
 /* taupe lettering, engraved feel */
 h1,h2,h3{font-weight:500;letter-spacing:.01em}
@@ -297,7 +300,7 @@ section.block:nth-of-type(even){background-color:var(--surface-2);background-ima
 /* cards: cream with a gold hairline; plum on hover */
 .panel,.areacard,.pathcard{border-color:color-mix(in srgb,var(--gold) 45%,var(--line))}
 .areacard,.pathcard{transition:transform .15s ease,background .2s,color .2s,border-color .2s}
-.areacard:hover,.pathcard:hover{background-color:var(--hero);background-image:var(--tex-grain),var(--tex-mottle);color:var(--hero-ink);border-color:var(--gold)}
+.areacard:hover,.pathcard:hover{background-color:var(--hero);background-image:var(--tex-ven-light),var(--tex-ven-dark);background-size:cover;color:var(--hero-ink);border-color:var(--gold)}
 .areacard:hover *,.pathcard:hover *{color:inherit}
 .areacard:hover small,.pathcard:hover small{color:var(--gold-hero)}
 /* buttons */
