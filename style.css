@@ -319,3 +319,9 @@ footer .nap a{color:inherit}
 .notfound h1{margin:6px 0 10px}
 .notfound .linklist{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:6px 24px;margin-top:12px}
 .hp{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}
+/* v9: right-hand column on town pages fits the screen and scrolls on its own */
+@media (min-width:901px){
+  .sidecol{max-height:calc(100vh - 100px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:color-mix(in srgb,var(--gold) 55%,transparent) transparent;padding:2px 6px 8px 2px;margin:-2px -6px 0 -2px}
+  .sidecol::-webkit-scrollbar{width:6px}
+  .sidecol::-webkit-scrollbar-thumb{background:color-mix(in srgb,var(--gold) 55%,transparent);border-radius:6px}
+}
