@@ -224,7 +224,7 @@ if($("investGuide"))$("investGuide").insertAdjacentHTML("beforeend",acc("What I 
  +acc("Short-term and vacation rentals",3,list(["Short-term rental rules differ by city and county, including at Bear Lake and in Ogden Valley","Some cities require a business license, permit or owner on site","Confirm the rules and any HOA restrictions before you write an offer"]),false)
  +acc("Rentals near Utah State",3,list(["Logan has steady rental demand from the university and local employers","Logan limits how many unrelated people can live in a single-family zone, so check the zoning for each address","Confirm whether a basement apartment is approved as a legal unit before counting its rent"]),false)
  +acc("Taxes and financing",3,list(["Non-owner-occupied homes don't get Utah's 45% primary-residence tax exemption","Investment loans usually need 15–25% down and carry higher rates","Talk with a tax professional about depreciation and 1031 exchanges"]),false)
- +`<div class="actions" style="padding:14px 0 6px"><a class="btn btn-olive btn-sm" href="${ROOT}calculators.html#invest">Open the cash-flow calculator</a></div>`);
+ +`<div class="actions" style="padding:14px 0 6px"><a class="btn btn-olive btn-sm" href="${ROOT}calculators#invest">Open the cash-flow calculator</a></div>`);
 
 if(document.getElementById("checklist")){
 const CHECK=[

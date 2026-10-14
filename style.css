@@ -311,3 +311,10 @@ section.block:nth-of-type(even){background-color:var(--surface-2);background-ima
 .cred b{color:var(--gold-hero)}
 .portrait,.mini-portrait{border-color:var(--gold-hero)}
 footer{border-top:1px solid color-mix(in srgb,var(--gold) 40%,var(--line))}
+
+/* v7: last-updated line on town guides, footer contact line */
+.pagehead .updated{margin:4px 0 0;font-size:.85rem;color:var(--hero-muted);letter-spacing:.02em}
+footer .nap a{color:inherit}
+.notfound{padding-block:72px 64px}
+.notfound h1{margin:6px 0 10px}
+.notfound .linklist{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:6px 24px;margin-top:12px}
