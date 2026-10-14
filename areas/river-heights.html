@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Figtree:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="../style.css?v=7">
+<link rel="stylesheet" href="../style.css?v=8">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "RealEstateAgent", "@id": "https://northernutahhomeguide.com/#agent", "name": "Christina Cacciacarne", "telephone": "+1-435-994-5449", "email": "christina@northernutahhomeguide.com", "url": "https://northernutahhomeguide.com/", "image": "https://northernutahhomeguide.com/img/christina-cacciacarne.jpg", "slogan": "Experience you can lean on.", "description": "Realtor with KW Unite Keller Williams in Logan, helping buyers, sellers and investors across Cache Valley, Brigham City, Ogden and Bear Lake for more than 20 years.", "address": {"@type": "PostalAddress", "streetAddress": "33 N Main St", "addressLocality": "Logan", "addressRegion": "UT", "postalCode": "84321", "addressCountry": "US"}, "geo": {"@type": "GeoCoordinates", "latitude": 41.7362, "longitude": -111.8345}, "openingHours": "Mo-Fr 09:00-17:00", "identifier": {"@type": "PropertyValue", "name": "Utah real estate license", "value": "13358874-SA00"}, "knowsLanguage": "en", "sameAs": ["https://christinacacciacarne.kw.com/"], "parentOrganization": {"@type": "RealEstateAgent", "name": "KW Unite Keller Williams", "address": {"@type": "PostalAddress", "streetAddress": "33 N Main St", "addressLocality": "Logan", "addressRegion": "UT", "postalCode": "84321", "addressCountry": "US"}}, "areaServed": [{"@type": "City", "name": "Logan, Utah"}, {"@type": "City", "name": "North Logan, Utah"}, {"@type": "City", "name": "Hyde Park, Utah"}, {"@type": "City", "name": "Smithfield, Utah"}, {"@type": "City", "name": "Providence, Utah"}, {"@type": "City", "name": "River Heights, Utah"}, {"@type": "City", "name": "Nibley, Utah"}, {"@type": "City", "name": "Millville, Utah"}, {"@type": "City", "name": "Hyrum, Utah"}, {"@type": "City", "name": "Wellsville, Utah"}, {"@type": "City", "name": "Richmond, Utah"}, {"@type": "City", "name": "Lewiston, Utah"}, {"@type": "City", "name": "Cornish, Utah"}, {"@type": "City", "name": "Trenton, Utah"}, {"@type": "City", "name": "Amalga, Utah"}, {"@type": "City", "name": "Clarkston, Utah"}, {"@type": "City", "name": "Newton, Utah"}, {"@type": "City", "name": "Mendon, Utah"}, {"@type": "City", "name": "Paradise, Utah"}, {"@type": "City", "name": "Brigham City, Utah"}, {"@type": "City", "name": "Perry, Utah"}, {"@type": "City", "name": "Ogden, Utah"}, {"@type": "City", "name": "North Ogden, Utah"}, {"@type": "City", "name": "Pleasant View, Utah"}, {"@type": "City", "name": "Harrisville, Utah"}, {"@type": "City", "name": "Roy, Utah"}, {"@type": "City", "name": "South Ogden, Utah"}, {"@type": "City", "name": "Riverdale, Utah"}, {"@type": "City", "name": "West Haven, Utah"}, {"@type": "City", "name": "Huntsville, Utah"}, {"@type": "City", "name": "Eden, Utah"}, {"@type": "City", "name": "Liberty, Utah"}, {"@type": "City", "name": "Plain City, Utah"}, {"@type": "City", "name": "Farr West, Utah"}, {"@type": "City", "name": "Marriott-Slaterville, Utah"}, {"@type": "City", "name": "Garden City, Utah"}, {"@type": "City", "name": "Laketown, Utah"}, {"@type": "City", "name": "Randolph, Utah"}, {"@type": "City", "name": "Woodruff, Utah"}]}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://northernutahhomeguide.com/"}, {"@type": "ListItem", "position": 2, "name": "Areas", "item": "https://northernutahhomeguide.com/areas/"}, {"@type": "ListItem", "position": 3, "name": "River Heights", "item": "https://northernutahhomeguide.com/areas/river-heights"}]}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "River Heights, Utah Real Estate Agent & Community Guide | Christina Cacciacarne", "url": "https://northernutahhomeguide.com/areas/river-heights", "datePublished": "2026-10-10", "dateModified": "2026-10-14", "author": {"@id": "https://northernutahhomeguide.com/#agent"}, "about": {"@type": "Place", "name": "River Heights, Utah"}}</script>
@@ -111,12 +111,13 @@
           <div class="field"><label for="v_when">Timeline</label><select id="v_when"><option>0–3 months</option><option>3–6 months</option><option>6–12 months</option><option>Just curious</option></select></div>
         </div>
         <div class="field"><label for="v_msg">Anything I should know?</label><textarea id="v_msg" placeholder="Updates, square footage, questions"></textarea></div>
-        <button class="btn btn-gold" type="submit">Prepare my request</button>
+        <div class="hp" aria-hidden="true"><label for="v_web">Leave this empty</label><input type="text" id="v_web" name="website" tabindex="-1" autocomplete="off"></div>
+        <button class="btn btn-gold" type="submit" id="v_send">Send my request</button>
         <p class="note" id="v_err" style="color:var(--gold-hero)" role="alert"></p>
         <div id="v_done" hidden style="display:grid;gap:8px">
           <div class="summary" id="v_text"></div>
           <div class="actions"><button class="btn btn-gold btn-sm" type="button" id="v_copy">Copy request</button><span class="note" id="v_copied" role="status" style="color:var(--hero-muted)"></span></div>
-          <p class="note" style="color:var(--hero-muted)">Paste it into a text or email to the number or address above.</p>
+          <p class="note" id="v_note" style="color:var(--hero-muted)"></p>
         </div>
       </form>
     </div>
@@ -131,6 +132,6 @@
   <div>Town information is compiled from public sources for general reference and may change. Verify school boundaries, utilities, zoning and fees with the city, district or county. Calculator results are estimates, not loan or tax advice.</div>
 </footer>
 <script>window.SITE_KW="https://christinacacciacarne.kw.com/";</script>
-<script src="../site.js?v=7"></script>
+<script src="../site.js?v=8"></script>
 </body>
 </html>

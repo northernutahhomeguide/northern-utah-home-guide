@@ -255,11 +255,29 @@ renderChecklist();summary();
 
 }
 if(document.getElementById("valueForm")){
-$("valueForm").addEventListener("submit",e=>{
+const vStart=Date.now();
+$("valueForm").addEventListener("submit",async e=>{
   e.preventDefault();
-  if(!$("v_name").value.trim()||!$("v_contact").value.trim()){$("v_err").textContent="Add your name and a phone number or email so I can reach you.";return;}
+  const v=id=>$(id).value.trim();
+  if(!v("v_name")||!v("v_contact")){$("v_err").textContent="Add your name and a phone number or email so I can reach you.";return;}
   $("v_err").textContent="";
-  $("v_text").textContent=`Hi Christina, this is ${$("v_name").value.trim()}.\nI'm looking to: ${$("v_type").value} (${$("v_when").value})\n${$("v_addr").value.trim()?"Property: "+$("v_addr").value.trim()+"\n":""}${$("v_msg").value.trim()?$("v_msg").value.trim()+"\n":""}Best way to reach me: ${$("v_contact").value.trim()}`;
+  const summaryText=`Hi Christina, this is ${v("v_name")}.\nI'm looking to: ${v("v_type")} (${v("v_when")})\n${v("v_addr")?"Property: "+v("v_addr")+"\n":""}${v("v_msg")?v("v_msg")+"\n":""}Best way to reach me: ${v("v_contact")}`;
+  const btn=$("v_send");btn.disabled=true;const label=btn.textContent;btn.textContent="Sending…";
+  let ok=false;
+  try{
+    const r=await fetch("/api/value",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({name:v("v_name"),contact:v("v_contact"),addr:v("v_addr"),type:v("v_type"),when:v("v_when"),msg:v("v_msg"),website:$("v_web")?$("v_web").value:"",t:vStart,page:location.href})});
+    ok=r.ok&&(await r.json()).ok;
+  }catch(_){ok=false}
+  btn.disabled=false;btn.textContent=label;
+  $("v_text").textContent=summaryText;
+  if(ok){
+    $("v_note").textContent="Sent! Christina will get back to you within one business day.";
+    $("v_copy").hidden=true;
+    $("valueForm").querySelectorAll("input,textarea").forEach(el=>{if(el.id!=="v_web")el.value=""});
+  }else{
+    $("v_note").textContent="It didn't go through. Copy your request and text or email it to the number or address above.";
+    $("v_copy").hidden=false;
+  }
   $("v_done").hidden=false;
 });
 $("v_copy").addEventListener("click",()=>copyText($("v_text").textContent,"v_copied","v_text"));
