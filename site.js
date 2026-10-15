@@ -23,6 +23,19 @@ function nearby(t,max){return OUTDOORS.map(o=>Object.assign({},o,{d:miles(t,o)})
 function list(arr){return `<ul>${arr.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`}
 function acc(title,count,inner,open){return inner?`<details class="acc"${open?" open":""}><summary>${esc(title)}${count?`<span class="n">${count}</span>`:""}</summary><div class="body">${inner}</div></details>`:""}
 const ne=a=>Array.isArray(a)&&a.length;
+
+const LAKETAGS=window.SITE_LAKETAGS||{},ENERGY=window.SITE_ENERGY||null;
+const ICONS={schools:'<path d="M3 9l9-5 9 5-9 5-9-5z"/><path d="M7 11.5V16c0 1.5 2.5 3 5 3s5-1.5 5-3v-4.5"/>',parks:'<path d="M12 3l5 8h-3l4 6H6l4-6H7z"/><path d="M12 17v4"/>',things:'<circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/>',outdoors:'<path d="M2 18c2 0 2-1.5 4-1.5S8 18 10 18s2-1.5 4-1.5S16 18 18 18s2-1.5 4-1.5"/><path d="M5 14l4-7 3 5 2-3 4 5"/>',dining:'<path d="M7 3v8M5 3v5a2 2 0 004 0V3M7 11v10"/><path d="M17 3c-2 2-2 6 0 8v10"/>',utilities:'<path d="M13 2L5 14h6l-1 8 8-12h-6z"/>',health:'<path d="M12 21s-7-4.5-7-10a4 4 0 017-2.5A4 4 0 0119 11c0 5.5-7 10-7 10z"/>',events:'<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/>',senior:'<circle cx="12" cy="7" r="3"/><path d="M6 21v-2a6 6 0 0112 0v2"/>',gtk:'<path d="M12 3a9 9 0 100 18 9 9 0 000-18z"/><path d="M12 8h.01M11 12h1v5h1"/>',new:'<path d="M12 3l2.5 5.5L20 9l-4 4 1 6-5-3-5 3 1-6-4-4 5.5-.5z"/>'};
+function ico(k){return `<svg class="ico" viewBox="0 0 24 24" aria-hidden="true">${ICONS[k]||""}</svg>`}
+function sec(id,k,title,count,inner,open){return inner?`<details class="acc" id="${id}-${k}"${open?" open":""}><summary>${ico(k)}<span class="st">${esc(title)}</span>${count?`<span class="n">${count}</span>`:""}</summary><div class="body">${inner}</div></details>`:""}
+function lakeTag(n){const x=LAKETAGS[n];if(!x||!x.tag)return "";const l={free:"Free",fee:"Day-use fee",mixed:"Free & fee areas"}[x.tag];return `<span class="feetag ${x.tag}">${l}</span>`}
+function itemHtml(s){const m=/^([^:]{2,60}):\s*(.+)$/.exec(s);return m?`<li><b>${esc(m[1])}</b> — ${esc(m[2])}</li>`:`<li>${esc(s)}</li>`}
+function diningHtml(t){return (ne(t.dining)?`<div class="sublabel">Local favorites</div><ul>${t.dining.map(itemHtml).join("")}</ul>`:"")+(ne(t.shopping)?`<div class="sublabel">Groceries &amp; errands</div>${list(t.shopping)}`:"")+`<p class="note">Hours and seasons change, so check before you go. Know a local favorite we missed? <a href="${ROOT}ask?town=${encodeURIComponent(t.name)}">Tell Christina</a>.</p>`}
+function utilHtml(t){const u=t.utilities;if(!u)return "";let h='<div class="util">'+u.rows.map(r=>`<div class="urow"><span class="uk">${esc(r.k)}</span><span>${r.url?`<a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.provider)}</a>`:esc(r.provider)}${r.rate?`<small>${esc(r.rate)}</small>`:""}</span></div>`).join("")+(ne(u.internet)?`<div class="urow"><span class="uk">Internet</span><span>${esc(u.internet.join(", "))}<small>Availability varies by street; check your address with each provider.</small></span></div>`:"")+"</div>";
+  if(u.start)h+=/^http/.test(u.start)?`<p class="note"><a href="${esc(u.start)}" target="_blank" rel="noopener">Start or transfer city utility service</a></p>`:`<p class="note">Start service: ${esc(u.start)}</p>`;
+  if(ENERGY)h+=`<div class="energy"><b>Power bills here are low.</b> Utah homes paid about ${ENERGY.utahCents}¢ per kWh in ${ENERGY.year}, versus about ${ENERGY.caCents}¢ in California and ${ENERGY.usCents}¢ nationally. The average Utah electric bill was about $${ENERGY.utahBill} a month, versus about $${ENERGY.caBill} in California. <a href="${ENERGY.source}" target="_blank" rel="noopener">Source: U.S. EIA</a></div>`;
+  return h+'<p class="note">Rates are as posted by each city or provider when this page was updated; confirm before you budget.</p>'}
+function newHtml(t,id){if(!ne(t.whatsNew))return "";return `<section class="whatsnew" id="${id}-new"><div class="wn-h">${ico("new")}What's new in ${esc(t.name)}</div><ul>${t.whatsNew.map(w=>`<li><span class="wn-date">${esc(w.date)}</span><div><strong>${esc(w.title)}</strong><div class="note">${esc(w.desc)}${w.link?` <a href="${ROOT}${w.link}">${esc(w.linkText)} →</a>`:(w.url?` <a href="${esc(w.url)}" target="_blank" rel="noopener">Source</a>`:"")}</div></div></li>`).join("")}</ul></section>`}
 async function copyText(text,statusEl,srcEl){
   try{await navigator.clipboard.writeText(text);$(statusEl).textContent="Copied";}
   catch(e){const r=document.createRange();r.selectNodeContents($(srcEl));const s=getSelection();s.removeAllRanges();s.addRange(r);$(statusEl).textContent="Selected. Press copy on your device.";}
@@ -78,7 +91,7 @@ function renderDetail(){
   const parks=ne(t.parks)?list(t.parks):"";
   const rec=ne(t.recreation)?list(t.recreation):"";
   const near=nearby(t,30);
-  const outdoorHtml=OUT_TYPES.map(([k,label])=>{const items=near.filter(o=>o.type===k).slice(0,5);return items.length?`<div class="sublabel">${label}</div><ul class="outlist">${items.map(o=>`<li><div><strong>${o.url?`<a href="${esc(o.url)}" target="_blank" rel="noopener">${esc(o.name)}</a>`:esc(o.name)}</strong><span class="mi num">${o.d<1?"in town":"~"+Math.round(o.d)+" mi"}</span></div><div class="note">${esc(o.desc)}</div></li>`).join("")}</ul>`:""}).join("");
+  const outdoorHtml=OUT_TYPES.map(([k,label])=>{const items=near.filter(o=>o.type===k).slice(0,5);return items.length?`<div class="sublabel">${label}</div><ul class="outlist">${items.map(o=>`<li><div><strong>${o.url?`<a href="${esc(o.url)}" target="_blank" rel="noopener">${esc(o.name)}</a>`:esc(o.name)}</strong>${lakeTag(o.name)}<span class="mi num">${o.d<1?"in town":"~"+Math.round(o.d)+" mi"}</span></div><div class="note">${esc(o.desc)}</div></li>`).join("")}</ul>`:""}).join("");
   const shop=(ne(t.shopping)?`<div class="sublabel">Shopping</div>${list(t.shopping)}`:"")+(ne(t.dining)?`<div class="sublabel">Local dining</div>${list(t.dining)}`:"");
   const health=(ne(t.healthcare)?`<div class="sublabel">Healthcare</div>${list(t.healthcare)}`:"")+(t.library?`<div class="sublabel">Library</div><div>${esc(t.library)}</div>`:"");
   const events=ne(t.events)?t.events.map(ev=>`<div class="event"><b>${esc(ev.when)}</b><div><strong>${esc(ev.name)}</strong>${ev.desc?`<div class="note">${esc(ev.desc)}</div>`:""}</div></div>`).join(""):"";
@@ -93,27 +106,32 @@ function renderDetail(){
       <h3>${esc(t.name)}</h3>
       <div class="tags">${t.population?`<span class="tag">Population ${esc(t.population.replace(/^approx\.\s*/i,"≈ "))}</span>`:""}${t.schoolDistrict?`<span class="tag">${esc(t.schoolDistrict.split("(")[0].trim())}</span>`:""}</div>
     </div>
+    ${(()=>{const has=k=>({schools:nSchools,outdoors:outdoorHtml,dining:1,utilities:t.utilities,events:events,gtk:gtk,commute:comm})[k];return `<nav class="jump" aria-label="Jump to a section">${ne(t.whatsNew)?`<a href="#x-new">What's new</a>`:""}${[["schools","Schools"],["outdoors","Lakes & trails"],["dining","Eat & shop"],["utilities","Utilities"],["events","Events"],["gtk","Good to know"],["commute","Commute"]].filter(([k])=>has(k)).map(([k,l])=>`<a href="#x-${k}">${esc(l)}</a>`).join("")}</nav>`})()}
     <p>${esc(t.overview)}</p>
-    ${comm?`<div class="commute"><div class="sublabel" style="margin:0">Typical drive times</div>${comm}</div>`:""}
+    ${newHtml(t,"x")}
+    ${comm?`<div class="commute" id="x-commute"><div class="sublabel" style="margin:0">Typical drive times</div>${comm}</div>`:""}
     <div>
-      ${acc("Schools",nSchools||"",schoolsHtml,false)}
-      ${acc("Parks",ne(t.parks)?t.parks.length:"",parks,false)}
-      ${acc("Recreation",ne(t.recreation)?t.recreation.length:"",rec,false)}
-      ${acc("Lakes, rivers & the outdoors",near.length?near.filter(o=>o.d<=30).length+" nearby":"",outdoorHtml,false)}
-      ${acc("Shopping & dining","",shop,false)}
-      ${acc("Healthcare & library","",health,false)}
-      ${acc("Yearly events",ne(t.events)?t.events.length:"",events,false)}
-      ${acc("Senior centers & 55+",ne(t.seniorResources)?t.seniorResources.length:"",senior,false)}
-      ${acc("Good to know before you buy",ne(t.goodToKnow)?t.goodToKnow.length:"",gtk,true)}
+      <div class="band">Living here</div>
+      ${sec("x","schools","Schools",nSchools||"",schoolsHtml+(/Cache County School District/.test(t.schoolDistrict||"")&&t.county==="Cache"?`<p class="more"><a href="${ROOT}school-changes">What changed for 2026–27 →</a></p>`:""),false)}
+      ${sec("x","parks","Parks & playgrounds",ne(t.parks)?t.parks.length:"",parks,false)}
+      ${sec("x","things","Things to do",ne(t.recreation)?t.recreation.length:"",rec,false)}
+      ${sec("x","outdoors","Lakes, rivers & trails",near.length?near.filter(o=>o.d<=30).length+" nearby":"",outdoorHtml?outdoorHtml+`<p class="more"><a href="${ROOT}lakes">Lake access, fees &amp; boat ramps →</a></p>`:"",false)}
+      <div class="band">Everyday life</div>
+      ${sec("x","dining","Eat, shop & run errands","",diningHtml(t),false)}
+      ${sec("x","utilities","New to town: utilities & internet","",utilHtml(t),false)}
+      ${sec("x","health","Healthcare & library","",health,false)}
+      <div class="band">Community</div>
+      ${sec("x","events","Yearly traditions & events",ne(t.events)?t.events.length:"",events,false)}
+      ${sec("x","senior","55+ & senior resources",ne(t.seniorResources)?t.seniorResources.length:"",senior,false)}
+      ${sec("x","gtk","Before you buy: good to know",ne(t.goodToKnow)?t.goodToKnow.length:"",gtk,true)}
     </div>
     <div class="actions">
       ${PAGE_OF[t.name]?`<a class="btn btn-olive btn-sm" href="${ROOT}${PAGE_OF[t.name]}">Full ${esc(t.name)} guide</a>`:""}
       <a class="btn btn-ghost btn-sm" href="${KW_URL}" target="_blank" rel="noopener">Homes for sale</a>
-      <a class="btn btn-ghost btn-sm" href="#value" data-ask="${esc(t.name)}">Ask me about ${esc(t.name)}</a>
+      <a class="btn btn-ghost btn-sm" href="${ROOT}ask?town=${encodeURIComponent(t.name)}">Ask me about ${esc(t.name)}</a>
       ${t.cityWebsite?`<a class="btn btn-ghost btn-sm" href="${esc(t.cityWebsite)}" target="_blank" rel="noopener">City website</a>`:""}
     </div>`;
 }
-$("townDetail").addEventListener("click",e=>{const a=e.target.closest("[data-ask]");if(a){const m=$("v_msg");if(!m.value)m.value=`I'd like to know more about ${a.dataset.ask}.`;}});
 function select(name,fromList){
   selected=name;store.set("town",name);renderList();renderMap();renderDetail();
   if(window.innerWidth<900) $("townDetail").scrollIntoView({behavior:"smooth",block:"start"});
@@ -283,4 +301,28 @@ $("valueForm").addEventListener("submit",async e=>{
 $("v_copy").addEventListener("click",()=>copyText($("v_text").textContent,"v_copied","v_text"));
 
 
+}
+
+function openTarget(id){const el=document.getElementById(id);if(!el)return;if(el.tagName==="DETAILS")el.open=true;el.scrollIntoView({behavior:"smooth",block:"start"});}
+document.addEventListener("click",e=>{const a=e.target.closest('a[href^="#"]');if(!a)return;const id=a.getAttribute("href").slice(1);const el=id&&document.getElementById(id);if(el&&(el.tagName==="DETAILS"||a.closest(".jump"))){e.preventDefault();openTarget(id);history.replaceState(null,"","#"+id);}});
+if(location.hash.length>1)setTimeout(()=>openTarget(decodeURIComponent(location.hash.slice(1))),60);
+
+// Ask Christina page
+if(document.getElementById("askForm")){
+const aStart=Date.now();const qs=new URLSearchParams(location.search);
+const towns=(window.SITE_TOWNS||[]).map(t=>t.name).sort((a,b)=>a.localeCompare(b));
+$("a_town").innerHTML='<option value="">Not sure yet / several</option>'+towns.map(n=>`<option>${esc(n)}</option>`).join("");
+if(qs.get("town")&&towns.includes(qs.get("town"))){$("a_town").value=qs.get("town");$("askTitle").textContent=`Ask me about ${qs.get("town")}`;}
+if(qs.get("topic")){const o=[...$("a_topic").options].find(o=>o.text===qs.get("topic"));if(o)$("a_topic").value=o.value;}
+$("askForm").addEventListener("submit",async e=>{
+  e.preventDefault();const v=id=>$(id).value.trim();
+  if(!v("a_name")||!v("a_contact")||!v("a_msg")){$("a_err").textContent="Add your name, a phone number or email, and your question.";return;}
+  $("a_err").textContent="";const btn=$("a_send");btn.disabled=true;const label=btn.textContent;btn.textContent="Sending…";
+  let ok=false;
+  try{const r=await fetch("/api/value",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({name:v("a_name"),contact:v("a_contact"),type:"Question: "+v("a_topic"),when:"",addr:"",msg:(v("a_town")?"Town: "+v("a_town")+"\n":"")+v("a_msg"),website:$("a_web").value,t:aStart,page:location.href})});ok=r.ok&&(await r.json()).ok;}catch(_){ok=false}
+  btn.disabled=false;btn.textContent=label;
+  $("a_done").hidden=false;
+  if(ok){$("a_note").textContent="Sent! I'll get back to you within one business day.";$("askForm").querySelectorAll("input,textarea").forEach(el=>{if(el.id!=="a_web")el.value=""});}
+  else{$("a_note").innerHTML=`It didn't go through. Please text or call <a href="tel:+14359945449">(435) 994-5449</a> or email <a href="mailto:christina@northernutahhomeguide.com">christina@northernutahhomeguide.com</a>.`;}
+});
 }
