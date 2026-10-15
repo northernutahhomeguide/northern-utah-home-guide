@@ -407,3 +407,8 @@ details.acc.faq>summary .st{font-size:1.15rem}
 .linkcols li{break-inside:avoid;margin-bottom:6px}
 @media (max-width:760px){.mvgrid,.cmpselect{grid-template-columns:1fr}.linkcols{columns:1}}
 @media (max-width:420px){.mvgrid .inputs{grid-template-columns:1fr}}
+
+/* v12 */
+.cm{grid-template-columns:110px 1fr auto}
+.cm .num small{display:block;font-size:.74rem;color:var(--gold-text);line-height:1.2}
+.cmnote{margin:4px 0 0;font-size:.8rem}

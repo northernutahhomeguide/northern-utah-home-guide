@@ -99,7 +99,7 @@ function renderDetail(){
   const gtk=ne(t.goodToKnow)?list(t.goodToKnow):"";
   const cm=t.commute||{};const maxC=90;
   const comm=["Logan","Brigham City","Ogden","Hill AFB","Salt Lake City"].filter(k=>cm[k]!=null).map(k=>{
-    const v=cm[k];return `<div class="cm"><span>${k}</span><div class="bar"><i style="width:${Math.max(3,Math.min(100,v/maxC*100))}%"></i></div><span class="num">${v<=3?"in town":"~"+v+" min"}</span></div>`}).join("");
+    const v=cm[k];return `<div class="cm"><span>${k}</span><div class="bar"><i style="width:${Math.max(3,Math.min(100,v/maxC*100))}%"></i></div><span class="num">${v<=3?"in town":"~"+v+" min"+((k==="Salt Lake City"||(k==="Hill AFB"&&v>20))?"<small>busy "+(v+15)+"–"+(v+20)+"</small>":"")}</span></div>`}).join("");
   $("townDetail").innerHTML=`
     <div style="display:grid;gap:8px">
       <div class="eyebrow" style="color:${regionColor(t.region)}">${esc(t.region)} · ${esc(t.county)} County</div>
@@ -109,7 +109,7 @@ function renderDetail(){
     ${(()=>{const has=k=>({schools:nSchools,outdoors:outdoorHtml,dining:1,utilities:t.utilities,events:events,gtk:gtk,commute:comm})[k];return `<nav class="jump" aria-label="Jump to a section">${ne(t.whatsNew)?`<a href="#x-new">What's new</a>`:""}${[["schools","Schools"],["outdoors","Lakes & trails"],["dining","Eat & shop"],["utilities","Utilities"],["events","Events"],["gtk","Good to know"],["commute","Commute"]].filter(([k])=>has(k)).map(([k,l])=>`<a href="#x-${k}">${esc(l)}</a>`).join("")}</nav>`})()}
     <p>${esc(t.overview)}</p>
     ${newHtml(t,"x")}
-    ${comm?`<div class="commute" id="x-commute"><div class="sublabel" style="margin:0">Typical drive times</div>${comm}</div>`:""}
+    ${comm?`<div class="commute" id="x-commute"><div class="sublabel" style="margin:0">Typical drive times</div>${comm}<p class="note cmnote">Normal traffic. Where I-15 backs up, the <b>busy</b> range is for weekdays 7–9 a.m. and 4–6 p.m. and Friday–Sunday afternoons. Crashes, weather and construction can add more; check the <a href="https://udottraffic.utah.gov" target="_blank" rel="noopener">UDOT Traffic</a> app before you go.</p></div>`:""}
     <div>
       <div class="band">Living here</div>
       ${sec("x","schools","Schools",nSchools||"",schoolsHtml+(/Cache County School District/.test(t.schoolDistrict||"")&&t.county==="Cache"?`<p class="more"><a href="${ROOT}school-changes">What changed for 2026–27 →</a></p>`:""),false)}
@@ -146,7 +146,7 @@ function renderCmp(){
   const a=TOWNS.find(t=>t.name===$("cmpA").value),b=TOWNS.find(t=>t.name===$("cmpB").value);
   const cnt=(t,k)=>ne(t[k])?t[k].length:"—";
   const sch=t=>{const s=t.schools||{};return ["elementary","middle","high"].map(k=>(s[k]||[]).length).reduce((x,y)=>x+y,0)||"—"};
-  const c=(t,k)=>t.commute&&t.commute[k]!=null?(t.commute[k]<=3?"in town":`~${t.commute[k]} min`):"—";
+  const c=(t,k)=>t.commute&&t.commute[k]!=null?(t.commute[k]<=3?"in town":`~${t.commute[k]} min`+((k==="Salt Lake City"||(k==="Hill AFB"&&t.commute[k]>20))?` (busy ${t.commute[k]+15}–${t.commute[k]+20})`:"")):"—";
   const rows=[["Area",t=>esc(t.region)],["Population",t=>esc((t.population||"—").replace(/^approx\.\s*/i,"≈ "))],["School district",t=>esc(t.schoolDistrict||"—")],["Public schools listed",sch],
     ["Parks listed",t=>cnt(t,"parks")],["Outdoor spots within 20 mi",t=>nearby(t,20).length||"—"],["Nearest lake or reservoir",t=>{const l=nearby(t,60).find(o=>o.type==="lake");return l?esc(l.name)+` (~${Math.max(1,Math.round(l.d))} mi)`:"—"}],["Nearest ski area",t=>{const l=nearby(t,80).find(o=>o.type==="ski");return l?esc(l.name)+` (~${Math.max(1,Math.round(l.d))} mi)`:"—"}],["Yearly events",t=>cnt(t,"events")],["Nearest healthcare",t=>esc(ne(t.healthcare)?t.healthcare[0]:"—")],
     ["Drive to Logan",t=>c(t,"Logan")],["Drive to Ogden",t=>c(t,"Ogden")],["Drive to Hill AFB",t=>c(t,"Hill AFB")],["Drive to Salt Lake City",t=>c(t,"Salt Lake City")]];
