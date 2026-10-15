@@ -386,3 +386,24 @@ footer .footguides a{color:inherit}
 .prose{padding:20px}
 .prose ul{padding-left:20px;display:grid;gap:6px}
 details.acc,.whatsnew,.commute{scroll-margin-top:90px}
+
+/* v11 */
+.prose{min-width:0}
+.climate{display:grid;grid-template-columns:repeat(auto-fit,minmax(92px,1fr));gap:8px}
+.climate>div{background:color-mix(in srgb,var(--gold-soft) 35%,var(--surface));border:1px solid var(--line);border-radius:10px;padding:8px 10px;display:grid;gap:2px}
+.climate b{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.climate span{font-weight:600;color:var(--heading)}
+.seasons{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+.season .sublabel{color:var(--gold-text)}
+.faqgrp h2{margin:0 0 6px}
+details.acc.faq>summary .st{font-size:1.15rem}
+.cmpselect{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:10px 0 14px}
+.cmpselect select,.mvgrid input,.mvgrid select{width:100%}
+.mvgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:22px;align-items:start}
+.mvgrid .inputs{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mvgrid .big{font-family:"Cormorant Garamond",Georgia,serif;font-size:2rem;font-weight:700;color:var(--heading);margin:4px 0 10px}
+#mv_lines tr.tot th,#mv_lines tr.tot td{font-weight:700;border-top:2px solid var(--line)}
+.linkcols{columns:2;column-gap:28px}
+.linkcols li{break-inside:avoid;margin-bottom:6px}
+@media (max-width:760px){.mvgrid,.cmpselect{grid-template-columns:1fr}.linkcols{columns:1}}
+@media (max-width:420px){.mvgrid .inputs{grid-template-columns:1fr}}
