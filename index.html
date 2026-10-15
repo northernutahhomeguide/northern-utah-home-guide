@@ -28,6 +28,8 @@ window.dataLayer=window.dataLayer||[];window.gtag=function(){dataLayer.push(argu
 .hero .movers a{display:inline-flex;align-items:center;padding:6px 13px;border-radius:999px;font-size:.88rem;font-weight:600;text-decoration:none;color:var(--hero-ink);border:1px solid color-mix(in srgb,var(--gold-hero) 55%,transparent);background:color-mix(in srgb,var(--gold-hero) 10%,transparent);transition:background .15s,border-color .15s}
 .hero .movers a:hover,.hero .movers a:focus-visible{background:color-mix(in srgb,var(--gold-hero) 24%,transparent);border-color:var(--gold-hero)}
 .hero .movers-label{flex-basis:100%}
+.hero .movers-mob{display:none}
+@media (max-width:820px){.hero .movers-desk{display:none}.hero .movers-mob{display:flex;margin-top:4px}}
 </style>
 </head>
 <body data-root="">
@@ -50,7 +52,7 @@ window.dataLayer=window.dataLayer||[];window.gtag=function(){dataLayer.push(argu
         <a class="btn btn-gold" href="#towns">Explore the towns</a>
         <a class="btn btn-ghost" href="#value">What's my home worth?</a>
       </div>
-      <nav class="movers" aria-label="Guides for newcomers">
+      <nav class="movers movers-desk" aria-label="Guides for newcomers">
         <span class="movers-label">New to the area?</span>
         <a href="newcomer-faq">Newcomer FAQ</a>
         <a href="moving-from-southern-california">Moving from SoCal</a>
@@ -67,6 +69,13 @@ window.dataLayer=window.dataLayer||[];window.gtag=function(){dataLayer.push(argu
       <div class="cred"><b>New</b><span>Builds, resales, land and investment property</span></div>
     </div>
     </div>
+    <nav class="movers movers-mob" aria-label="Guides for newcomers">
+      <span class="movers-label">New to the area?</span>
+      <a href="newcomer-faq">Newcomer FAQ</a>
+      <a href="moving-from-southern-california">Moving from SoCal</a>
+      <a href="hill-afb">Hill AFB guide</a>
+      <a href="usu">USU guide</a>
+    </nav>
   </div>
 </section>
 <nav class="quick" aria-label="Popular tools">
