@@ -22,6 +22,13 @@
 if(s)return;var g=document.createElement("script");g.async=1;g.src="https://www.googletagmanager.com/gtag/js?id=G-525D6GS03P";document.head.appendChild(g);
 window.dataLayer=window.dataLayer||[];window.gtag=function(){dataLayer.push(arguments);};gtag("js",new Date());gtag("config","G-525D6GS03P");})();
 </script>
+<style>
+.hero .movers{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:22px}
+.hero .movers-label{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-hero);font-weight:600}
+.hero .movers a{display:inline-flex;align-items:center;padding:6px 13px;border-radius:999px;font-size:.88rem;font-weight:600;text-decoration:none;color:var(--hero-ink);border:1px solid color-mix(in srgb,var(--gold-hero) 55%,transparent);background:color-mix(in srgb,var(--gold-hero) 10%,transparent);transition:background .15s,border-color .15s}
+.hero .movers a:hover,.hero .movers a:focus-visible{background:color-mix(in srgb,var(--gold-hero) 24%,transparent);border-color:var(--gold-hero)}
+.hero .movers-label{flex-basis:100%}
+</style>
 </head>
 <body data-root="">
 <header class="topbar">
@@ -43,6 +50,13 @@ window.dataLayer=window.dataLayer||[];window.gtag=function(){dataLayer.push(argu
         <a class="btn btn-gold" href="#towns">Explore the towns</a>
         <a class="btn btn-ghost" href="#value">What's my home worth?</a>
       </div>
+      <nav class="movers" aria-label="Guides for newcomers">
+        <span class="movers-label">New to the area?</span>
+        <a href="newcomer-faq">Newcomer FAQ</a>
+        <a href="moving-from-southern-california">Moving from SoCal</a>
+        <a href="hill-afb">Hill AFB guide</a>
+        <a href="usu">USU guide</a>
+      </nav>
     </div>
     <div class="side">
     <figure class="portrait"><img src="img/christina-cacciacarne.jpg" alt="Christina Cacciacarne, real estate agent with KW Unite Keller Williams" width="640" height="800"></figure>
