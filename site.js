@@ -129,6 +129,7 @@ function renderDetail(){
       ${PAGE_OF[t.name]?`<a class="btn btn-olive btn-sm" href="${ROOT}${PAGE_OF[t.name]}">Full ${esc(t.name)} guide</a>`:""}
       <a class="btn btn-ghost btn-sm" href="${KW_URL}" target="_blank" rel="noopener">Homes for sale</a>
       <a class="btn btn-ghost btn-sm" href="${ROOT}ask?town=${encodeURIComponent(t.name)}">Ask me about ${esc(t.name)}</a>
+      <button class="btn btn-ghost btn-sm" type="button" data-guide-town="${esc(t.name)}">Email me this guide</button>
       ${t.cityWebsite?`<a class="btn btn-ghost btn-sm" href="${esc(t.cityWebsite)}" target="_blank" rel="noopener">City website</a>`:""}
     </div>`;
 }
@@ -326,3 +327,85 @@ $("askForm").addEventListener("submit",async e=>{
   else{$("a_note").innerHTML=`It didn't go through. Please text or call <a href="tel:+14359945449">(435) 994-5449</a> or email <a href="mailto:christina@northernutahhomeguide.com">christina@northernutahhomeguide.com</a>.`;}
 });
 }
+
+// "Email me this guide" / "Email me this comparison": emails the visitor a summary through /api/guide.
+// Only visitors who tick the box are saved as leads for Christina.
+(function(){
+const API=/(^|\.)northernutahhomeguide\.com$/.test(location.hostname)?"/api/guide":"https://northernutahhomeguide.com/api/guide";
+const MAIL='<svg class="gico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 6.5l8.5 6.5 8.5-6.5"/></svg>';
+let dlg,cur,start;
+function dialog(){
+  if(dlg)return dlg;
+  dlg=document.createElement("dialog");dlg.className="gdlg";dlg.setAttribute("aria-labelledby","g_title");
+  dlg.innerHTML=`<form class="gform" novalidate>
+  <button class="gx" type="button" aria-label="Close">&times;</button>
+  <div class="eyebrow">Save it for later</div>
+  <h3 id="g_title"></h3>
+  <p class="gsub" id="g_sub"></p>
+  <div class="field"><label for="g_name">First name</label><input type="text" id="g_name" autocomplete="given-name" maxlength="40"></div>
+  <div class="field"><label for="g_email">Email</label><input type="email" id="g_email" autocomplete="email" inputmode="email" maxlength="120" required></div>
+  <label class="gok"><input type="checkbox" id="g_ok"><span id="g_oklbl"></span></label>
+  <div class="hp" aria-hidden="true"><label for="g_web">Leave this empty</label><input type="text" id="g_web" tabindex="-1" autocomplete="off"></div>
+  <button class="btn btn-gold" type="submit" id="g_send">Send it</button>
+  <p class="gmsg" id="g_msg" role="status"></p>
+  <p class="gfine">You'll get this one email. You're only added to Christina's list if you tick the box.</p>
+</form>`;
+  document.body.appendChild(dlg);
+  dlg.querySelector(".gx").addEventListener("click",()=>dlg.close());
+  dlg.addEventListener("click",e=>{if(e.target===dlg)dlg.close()});
+  dlg.querySelector("form").addEventListener("submit",send);
+  return dlg;
+}
+function open(kind,towns){
+  const d=dialog();cur={kind,towns};start=Date.now();
+  const where=towns.join(" and ");
+  $("g_title").textContent=kind==="compare"?`Email me ${towns[0]} vs. ${towns[1]}`:`Email me the ${towns[0]} guide`;
+  $("g_sub").textContent=kind==="compare"?"Both towns side by side, with links to each full guide. Handy for talking it over at home.":`Schools, drive times, parks and what's new in ${towns[0]}, with a link back to the full guide.`;
+  $("g_oklbl").textContent=`Yes, it's okay for Christina to follow up with homes and local updates for ${where}.`;
+  $("g_ok").checked=false;$("g_msg").textContent="";$("g_msg").className="gmsg";
+  const f=d.querySelector("form");f.hidden=false;$("g_send").disabled=false;$("g_send").textContent="Send it";
+  const saved=store.get("guideContact")||{};if(saved.name&&!$("g_name").value)$("g_name").value=saved.name;if(saved.email&&!$("g_email").value)$("g_email").value=saved.email;
+  d.showModal();(($("g_email").value)?$("g_send"):$("g_name")).focus();
+}
+async function send(e){
+  e.preventDefault();
+  const email=$("g_email").value.trim(),name=$("g_name").value.trim(),msg=$("g_msg");
+  if(!/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(email)){msg.textContent="Please enter a valid email address.";msg.className="gmsg err";$("g_email").focus();return;}
+  const consent=$("g_ok").checked;
+  $("g_send").disabled=true;$("g_send").textContent="Sending…";msg.textContent="";
+  let ok=false,err="";
+  try{const r=await fetch(API,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({kind:cur.kind,towns:cur.towns,name,email,consent,website:$("g_web").value,t:start,page:location.href.split("#")[0]})});
+    const j=await r.json().catch(()=>({}));ok=r.ok&&j.ok;err=j.error||"";}catch(_){ok=false}
+  if(ok){
+    store.set("guideContact",{name,email});
+    msg.innerHTML=`Sent! Check your inbox for ${cur.kind==="compare"?"the comparison":`the ${esc(cur.towns[0])} guide`} (and your spam folder, just in case).`;msg.className="gmsg ok";
+    $("g_send").textContent="Sent";
+    if(window.gtag)gtag("event","guide_email",{guide_kind:cur.kind,guide_towns:cur.towns.join(" vs "),follow_up:consent?"yes":"no"});
+  }else{
+    msg.innerHTML=err==="email"?"Please check your email address.":err==="busy"?"Too many requests from this connection. Please try again in a little while.":`That didn't go through. Please try again, or call or text Christina at <a href="tel:+14359945449">(435) 994-5449</a>.`;
+    msg.className="gmsg err";$("g_send").disabled=false;$("g_send").textContent="Send it";
+  }
+}
+document.addEventListener("click",e=>{
+  const b=e.target.closest("[data-guide-town],[data-guide-compare]");if(!b)return;
+  if(b.dataset.guideTown){open("town",[b.dataset.guideTown]);return;}
+  const a=$("cmpA")&&$("cmpA").value,c=$("cmpB")&&$("cmpB").value;
+  if(!a||!c||a===c){const n=$("g_cmpnote");if(n){n.textContent="Pick two different towns to compare.";setTimeout(()=>n.textContent="",3000);}return;}
+  open("compare",[a,c]);
+});
+// Town guide pages: a button under each town's jump menu and in its button row at the bottom.
+document.querySelectorAll("article.town").forEach(art=>{
+  const h=art.querySelector(".townh");if(!h)return;
+  const name=h.textContent.replace(/^Living in\s+/,"").trim();
+  const top=document.createElement("div");top.className="gsave";
+  top.innerHTML=`<button class="btn btn-gold btn-sm" type="button" data-guide-town="${esc(name)}">${MAIL}Email me this guide</button><span class="note">Get ${esc(name)} in your inbox to read later.</span>`;
+  const jump=art.querySelector(".jump");
+  if(jump)jump.after(top);else h.parentElement.after(top);
+  const acts=art.querySelector(":scope > .actions");
+  if(acts){const b=document.createElement("button");b.className="btn btn-gold btn-sm";b.type="button";b.dataset.guideTown=name;b.innerHTML=MAIL+"Email me this guide";acts.prepend(b);}
+});
+// Home page comparison tool
+const tw=document.getElementById("cmpTable");
+if(tw){const w=tw.closest(".tablewrap")||tw;const d=document.createElement("div");d.className="gsave";
+  d.innerHTML=`<button class="btn btn-gold btn-sm" type="button" data-guide-compare="1">${MAIL}Email me this comparison</button><span class="note" id="g_cmpnote">Send both towns side by side to your inbox.</span>`;w.after(d);}
+})();

@@ -412,3 +412,25 @@ details.acc.faq>summary .st{font-size:1.15rem}
 .cm{grid-template-columns:110px 1fr auto}
 .cm .num small{display:block;font-size:.74rem;color:var(--gold-text);line-height:1.2}
 .cmnote{margin:4px 0 0;font-size:.8rem}
+
+/* Email me this guide / comparison */
+.gsave{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px}
+.gsave .note{color:var(--muted)}
+.gico{width:17px;height:17px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.gdlg{width:min(440px,calc(100vw - 32px));max-height:calc(100dvh - 32px);padding:0;border:1px solid var(--line);border-radius:18px;background:var(--surface);color:var(--ink);box-shadow:0 24px 60px rgba(43,18,24,.35)}
+.gdlg::backdrop{background:rgba(43,18,24,.55);backdrop-filter:blur(2px)}
+.gform{position:relative;display:grid;gap:12px;padding:24px 22px 20px;border-top:6px solid var(--olive);border-radius:18px}
+.gform h3{color:var(--olive);font-size:1.75rem;padding-right:28px}
+.gsub{color:var(--muted);font-size:.95rem;margin-top:-4px}
+.gform input[type=text],.gform input[type=email]{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;font-size:16px}
+.gform input:focus{outline:2px solid var(--gold);outline-offset:1px}
+.gok{display:flex;gap:10px;align-items:flex-start;padding:12px;border:1px solid color-mix(in srgb,var(--gold) 45%,var(--line));border-radius:12px;background:var(--gold-soft);font-size:.92rem;line-height:1.45;cursor:pointer}
+.gok input{width:20px;height:20px;margin:1px 0 0;flex:none;accent-color:var(--olive)}
+.gx{position:absolute;top:10px;right:12px;width:36px;height:36px;border:0;border-radius:999px;background:transparent;font-size:1.6rem;line-height:1;color:var(--muted);cursor:pointer}
+.gx:hover{background:var(--surface-2)}
+.gmsg{font-size:.92rem;min-height:0}
+.gmsg:empty{display:none}
+.gmsg.ok{color:#2F5D3A;font-weight:600}
+.gmsg.err{color:var(--coral)}
+.gfine{font-size:.78rem;color:var(--muted)}
+#g_send:disabled{opacity:.7;cursor:default;transform:none}
