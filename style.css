@@ -434,3 +434,44 @@ details.acc.faq>summary .st{font-size:1.15rem}
 .gmsg.err{color:var(--coral)}
 .gfine{font-size:.78rem;color:var(--muted)}
 #g_send:disabled{opacity:.7;cursor:default;transform:none}
+
+/* links inside the plum "What's my home worth?" box */
+.contact a:not(.btn){color:var(--hero-ink);text-decoration-color:var(--gold-hero);text-decoration-thickness:1.5px}
+.contact a:not(.btn):hover{color:var(--gold-hero)}
+/* mailer checkbox on the plum form */
+.gok.gok-dark{background:color-mix(in srgb,var(--hero-ink) 10%,transparent);border-color:color-mix(in srgb,var(--gold-hero) 45%,transparent);color:var(--hero-ink)}
+.gok.gok-dark input{accent-color:var(--gold-hero)}
+form .gok{margin:2px 0}
+
+/* listing-alerts prompt + town chips */
+.ldlg .gform{gap:10px}
+.ldlg #l_skip{margin-top:-2px}
+.opt{font-weight:400;color:var(--muted)}
+.flabel{font-size:.78rem;font-weight:600;color:var(--muted);letter-spacing:.03em}
+.tchips{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.tchip{font-size:.85rem;font-weight:600;padding:6px 11px;border-radius:999px;border:1px solid color-mix(in srgb,var(--gold) 45%,var(--line));background:var(--surface);color:var(--olive);cursor:pointer;line-height:1.2}
+.tchip[aria-pressed="true"]{background:var(--olive);border-color:var(--olive);color:var(--hero-ink)}
+.tchip[aria-pressed="true"]::before{content:"✓ "}
+.tmore{border:0;background:none;padding:6px 2px 0;color:var(--olive);font-weight:600;font-size:.88rem;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+
+/* school alerts + quiz */
+.signup{padding:22px;display:grid;gap:12px;border-top:6px solid var(--olive)}
+.signup h2{font-size:clamp(1.6rem,3.4vw,2.1rem);color:var(--olive)}
+.signup input[type=text],.signup input[type=email],.signup input[type=tel],.signup select,.quizlead input[type=text],.quizlead input[type=email],.quizlead input[type=tel],.quizlead select{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;font-size:16px}
+.checks{display:flex;flex-wrap:wrap;gap:8px}
+.checks label,.qopts label{display:inline-flex;align-items:center;gap:8px;padding:8px 13px;border:1px solid color-mix(in srgb,var(--gold) 45%,var(--line));border-radius:999px;background:var(--surface);font-size:.93rem;cursor:pointer}
+.checks input,.qopts input{accent-color:var(--olive);width:17px;height:17px;margin:0}
+.checks label:has(input:checked),.qopts label:has(input:checked){background:var(--gold-soft);border-color:var(--olive)}
+.quiz{display:grid;gap:14px}
+.quiz fieldset{border:1px solid var(--line);border-radius:16px;background:var(--surface);padding:16px 18px;margin:0;display:grid;gap:10px}
+.quiz legend{font-family:var(--display);font-size:1.35rem;font-weight:600;color:var(--olive);padding:0 6px}
+.qopts{display:flex;flex-wrap:wrap;gap:8px}
+.qhint{font-size:.88rem;color:var(--muted);margin-top:-4px}
+.qresults{padding:22px;display:grid;gap:14px;border-top:6px solid var(--gold)}
+.qresults ol{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.qres{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:#fff}
+.qn{flex:none;width:30px;height:30px;border-radius:999px;background:var(--olive);color:var(--hero-ink);display:grid;place-items:center;font-weight:700}
+.qt{font-family:var(--display);font-size:1.4rem;font-weight:700;margin-right:8px}
+.qwhy{font-size:.92rem;color:var(--ink);margin-top:2px}
+.quizlead{display:grid;gap:12px;padding-top:6px;border-top:1px solid var(--line)}
+@media (max-width:600px){.quiz fieldset{padding:14px}.qopts label,.checks label{font-size:.9rem;padding:7px 11px}}

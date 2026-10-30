@@ -2,6 +2,7 @@ const TOWNS = window.SITE_TOWNS||[];
 const OUTDOORS = window.SITE_OUTDOORS||[];
 const PAGE_OF = window.SITE_PAGES||{};
 const ROOT = document.body.dataset.root||"";
+const API_ORIGIN = /(^|\.)northernutahhomeguide\.com$/.test(location.hostname)?"":"https://northernutahhomeguide.com";
 const KW_URL = window.SITE_KW||"https://christinacacciacarne.kw.com/";
 const REGIONS = [
   {key:"Cache Valley",label:"Cache Valley",color:"var(--r-cache)"},
@@ -129,7 +130,7 @@ function renderDetail(){
       ${PAGE_OF[t.name]?`<a class="btn btn-olive btn-sm" href="${ROOT}${PAGE_OF[t.name]}">Full ${esc(t.name)} guide</a>`:""}
       <a class="btn btn-ghost btn-sm" href="${KW_URL}" target="_blank" rel="noopener">Homes for sale</a>
       <a class="btn btn-ghost btn-sm" href="${ROOT}ask?town=${encodeURIComponent(t.name)}">Ask me about ${esc(t.name)}</a>
-      <button class="btn btn-ghost btn-sm" type="button" data-guide-town="${esc(t.name)}">Email me this guide</button>
+      <button class="btn btn-gold btn-sm" type="button" data-guide-town="${esc(t.name)}"><svg class="gico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 6.5l8.5 6.5 8.5-6.5"/></svg>Email me this guide</button>
       ${t.cityWebsite?`<a class="btn btn-ghost btn-sm" href="${esc(t.cityWebsite)}" target="_blank" rel="noopener">City website</a>`:""}
     </div>`;
 }
@@ -275,6 +276,7 @@ renderChecklist();summary();
 }
 if(document.getElementById("valueForm")){
 const vStart=Date.now();
+$("v_send").insertAdjacentHTML("beforebegin",'<label class="gok gok-dark"><input type="checkbox" id="v_ok"><span>Yes, it\'s okay for Christina to also send me new listings and local updates.</span></label>');
 $("valueForm").addEventListener("submit",async e=>{
   e.preventDefault();
   const v=id=>$(id).value.trim();
@@ -284,7 +286,7 @@ $("valueForm").addEventListener("submit",async e=>{
   const btn=$("v_send");btn.disabled=true;const label=btn.textContent;btn.textContent="Sending…";
   let ok=false;
   try{
-    const r=await fetch("/api/value",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({name:v("v_name"),contact:v("v_contact"),addr:v("v_addr"),type:v("v_type"),when:v("v_when"),msg:v("v_msg"),website:$("v_web")?$("v_web").value:"",t:vStart,page:location.href})});
+    const r=await fetch(API_ORIGIN+"/api/value",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({name:v("v_name"),contact:v("v_contact"),addr:v("v_addr"),type:v("v_type"),when:v("v_when"),msg:v("v_msg"),source:"value",consent:$("v_ok").checked,website:$("v_web")?$("v_web").value:"",t:vStart,page:location.href})});
     ok=r.ok&&(await r.json()).ok;
   }catch(_){ok=false}
   btn.disabled=false;btn.textContent=label;
@@ -292,7 +294,7 @@ $("valueForm").addEventListener("submit",async e=>{
   if(ok){
     $("v_note").textContent="Sent! Christina will get back to you within one business day.";
     $("v_copy").hidden=true;
-    $("valueForm").querySelectorAll("input,textarea").forEach(el=>{if(el.id!=="v_web")el.value=""});
+    $("valueForm").querySelectorAll("input,textarea").forEach(el=>{if(el.id!=="v_web")el.value=""});$("v_ok").checked=false;
   }else{
     $("v_note").textContent="It didn't go through. Copy your request and text or email it to the number or address above.";
     $("v_copy").hidden=false;
@@ -315,15 +317,16 @@ const towns=(window.SITE_TOWNS||[]).map(t=>t.name).sort((a,b)=>a.localeCompare(b
 $("a_town").innerHTML='<option value="">Not sure yet / several</option>'+towns.map(n=>`<option>${esc(n)}</option>`).join("");
 if(qs.get("town")&&towns.includes(qs.get("town"))){$("a_town").value=qs.get("town");$("askTitle").textContent=`Ask me about ${qs.get("town")}`;}
 if(qs.get("topic")){const o=[...$("a_topic").options].find(o=>o.text===qs.get("topic"));if(o)$("a_topic").value=o.value;}
+$("a_send").insertAdjacentHTML("beforebegin",'<label class="gok"><input type="checkbox" id="a_ok"><span>Yes, it\'s okay for Christina to also send me new listings and local updates.</span></label>');
 $("askForm").addEventListener("submit",async e=>{
   e.preventDefault();const v=id=>$(id).value.trim();
   if(!v("a_name")||!v("a_contact")||!v("a_msg")){$("a_err").textContent="Add your name, a phone number or email, and your question.";return;}
   $("a_err").textContent="";const btn=$("a_send");btn.disabled=true;const label=btn.textContent;btn.textContent="Sending…";
   let ok=false;
-  try{const r=await fetch("/api/value",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({name:v("a_name"),contact:v("a_contact"),type:"Question: "+v("a_topic"),when:"",addr:"",msg:(v("a_town")?"Town: "+v("a_town")+"\n":"")+v("a_msg"),website:$("a_web").value,t:aStart,page:location.href})});ok=r.ok&&(await r.json()).ok;}catch(_){ok=false}
+  try{const r=await fetch(API_ORIGIN+"/api/value",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({name:v("a_name"),contact:v("a_contact"),type:"Question: "+v("a_topic"),when:"",addr:"",msg:(v("a_town")?"Town: "+v("a_town")+"\n":"")+v("a_msg"),source:"ask",town:v("a_town"),topic:v("a_topic"),consent:$("a_ok").checked,website:$("a_web").value,t:aStart,page:location.href})});ok=r.ok&&(await r.json()).ok;}catch(_){ok=false}
   btn.disabled=false;btn.textContent=label;
   $("a_done").hidden=false;
-  if(ok){$("a_note").textContent="Sent! I'll get back to you within one business day.";$("askForm").querySelectorAll("input,textarea").forEach(el=>{if(el.id!=="a_web")el.value=""});}
+  if(ok){$("a_note").textContent="Sent! I'll get back to you within one business day.";$("askForm").querySelectorAll("input,textarea").forEach(el=>{if(el.id!=="a_web")el.value=""});$("a_ok").checked=false;}
   else{$("a_note").innerHTML=`It didn't go through. Please text or call <a href="tel:+14359945449">(435) 994-5449</a> or email <a href="mailto:christina@northernutahhomeguide.com">christina@northernutahhomeguide.com</a>.`;}
 });
 }
@@ -409,3 +412,150 @@ const tw=document.getElementById("cmpTable");
 if(tw){const w=tw.closest(".tablewrap")||tw;const d=document.createElement("div");d.className="gsave";
   d.innerHTML=`<button class="btn btn-gold btn-sm" type="button" data-guide-compare="1">${MAIL}Email me this comparison</button><span class="note" id="g_cmpnote">Send both towns side by side to your inbox.</span>`;w.after(d);}
 })();
+
+// ---------------------------------------------------------------------------
+// Shared sign-up helpers (listing alerts, school alerts, town quiz) -> /api/signup
+// ---------------------------------------------------------------------------
+const ALL_TOWNS=["Amalga","Brigham City","Clarkston","Cornish","Eden","Farr West","Garden City","Harrisville","Huntsville","Hyde Park","Hyrum","Laketown","Lewiston","Liberty","Logan","Marriott-Slaterville","Mendon","Millville","Newton","Nibley","North Logan","North Ogden","Ogden","Paradise","Perry","Plain City","Pleasant View","Providence","Randolph","Richmond","River Heights","Riverdale","Roy","Smithfield","South Ogden","Trenton","Wellsville","West Haven","Woodruff"];
+const MAIN_TOWNS=["Logan","North Logan","Hyde Park","Smithfield","Providence","Brigham City","Ogden","North Ogden","Garden City","Huntsville"];
+const EMAIL_OK=s=>/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(s);
+async function postSignup(body){
+  try{const r=await fetch(API_ORIGIN+"/api/signup",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(Object.assign({page:location.href.split("#")[0]},body))});
+    const j=await r.json().catch(()=>({}));return {ok:r.ok&&j.ok,error:j.error||""};}catch(_){return {ok:false,error:""}}
+}
+const chip=(n,on)=>`<button type="button" class="tchip" aria-pressed="${on?"true":"false"}" data-town="${esc(n)}">${esc(n)}</button>`;
+function chipPicker(el,preselect){
+  const pre=new Set(preselect||[]);
+  const main=MAIN_TOWNS.concat([...pre].filter(n=>!MAIN_TOWNS.includes(n)));
+  const rest=ALL_TOWNS.filter(n=>!main.includes(n));
+  el.innerHTML=`<div class="tchips">${main.map(n=>chip(n,pre.has(n))).join("")}</div>
+  <button type="button" class="tmore" aria-expanded="false">More towns ▾</button>
+  <div class="tchips" hidden>${rest.map(n=>chip(n,false)).join("")}</div>`;
+  el.addEventListener("click",e=>{
+    const c=e.target.closest(".tchip");if(c){c.setAttribute("aria-pressed",c.getAttribute("aria-pressed")==="true"?"false":"true");return;}
+    const m=e.target.closest(".tmore");if(m){const box=m.nextElementSibling;box.hidden=!box.hidden;m.setAttribute("aria-expanded",String(!box.hidden));m.textContent=box.hidden?"More towns ▾":"Fewer towns ▴";}
+  });
+  return ()=>[...el.querySelectorAll('.tchip[aria-pressed="true"]')].map(b=>b.dataset.town);
+}
+
+// ---------------------------------------------------------------------------
+// "Search homes" listing-alerts prompt: shows once per visitor, then always goes straight to the listings.
+// ---------------------------------------------------------------------------
+(function(){
+  const KEY="nuhg_listings_prompt";
+  const seen=()=>{try{return !!localStorage.getItem(KEY)}catch(_){return true}};
+  const mark=v=>{try{localStorage.setItem(KEY,v)}catch(_){}};
+  let dlg,href,getTowns,started;
+  function build(pre){
+    dlg=document.createElement("dialog");dlg.className="gdlg ldlg";dlg.setAttribute("aria-labelledby","l_title");
+    dlg.innerHTML=`<form class="gform" novalidate>
+      <button class="gx" type="button" aria-label="Close">&times;</button>
+      <div class="eyebrow">Before you search</div>
+      <h3 id="l_title">Want new listings sent to you?</h3>
+      <p class="gsub">Christina will email you homes as they hit the market in the towns you pick. Unsubscribe anytime.</p>
+      <div class="field"><label for="l_email">Email</label><input type="email" id="l_email" autocomplete="email" inputmode="email" maxlength="120"></div>
+      <div class="field"><label for="l_name">First name <span class="opt">(optional)</span></label><input type="text" id="l_name" autocomplete="given-name" maxlength="40"></div>
+      <div class="field"><span class="flabel">Which towns? <span class="opt">(optional)</span></span><div id="l_towns"></div></div>
+      <div class="hp" aria-hidden="true"><label for="l_web">Leave this empty</label><input type="text" id="l_web" tabindex="-1" autocomplete="off"></div>
+      <button class="btn btn-gold" type="submit" id="l_send">Yes, send me listings</button>
+      <button class="btn btn-ghost" type="button" id="l_skip">No thanks, take me to the listings</button>
+      <p class="gmsg" id="l_msg" role="status"></p>
+    </form>`;
+    document.body.appendChild(dlg);
+    getTowns=chipPicker(dlg.querySelector("#l_towns"),pre);
+    const go=()=>{dlg.close();window.open(href,"_blank","noopener");};
+    dlg.querySelector(".gx").addEventListener("click",()=>{mark("closed");go();});
+    dlg.addEventListener("cancel",e=>{e.preventDefault();mark("closed");go();});
+    dlg.querySelector("#l_skip").addEventListener("click",()=>{mark("no");go();});
+    dlg.querySelector("form").addEventListener("submit",e=>{
+      e.preventDefault();
+      const email=$("l_email").value.trim(),msg=$("l_msg");
+      if(!EMAIL_OK(email)){msg.textContent="Please enter a valid email, or tap “No thanks” to go straight to the listings.";msg.className="gmsg err";$("l_email").focus();return;}
+      mark("yes");store.set("guideContact",{name:$("l_name").value.trim(),email});
+      const body={kind:"listings",email,name:$("l_name").value.trim(),towns:getTowns(),website:$("l_web").value,t:started};
+      window.open(href,"_blank","noopener");   // open the listings now, while the click still counts as the visitor's
+      dlg.close();
+      postSignup(body).then(r=>{if(window.gtag)gtag("event","listing_alerts_signup",{towns:body.towns.join(", ")||"any",ok:r.ok?"yes":"no"});});
+    });
+  }
+  document.addEventListener("click",e=>{
+    const a=e.target.closest('a[href*="christinacacciacarne.kw.com"]');
+    if(!a||e.ctrlKey||e.metaKey||e.shiftKey||e.button>0||seen()||typeof HTMLDialogElement==="undefined")return;
+    e.preventDefault();href=a.href;started=Date.now();
+    const art=a.closest("article.town"),h=art&&art.querySelector(".townh");
+    const pre=h?[h.textContent.replace(/^Living in\s+/,"").trim()]:[];
+    if(dlg)dlg.remove();build(pre.filter(n=>ALL_TOWNS.includes(n)));
+    const saved=store.get("guideContact")||{};if(saved.email)$("l_email").value=saved.email;if(saved.name)$("l_name").value=saved.name;
+    dlg.showModal();$("l_email").focus();
+  },true);
+})();
+
+// ---------------------------------------------------------------------------
+// School boundary alerts (school-changes page)
+// ---------------------------------------------------------------------------
+if(document.getElementById("schoolAlertForm")){
+  const sStart=Date.now();
+  $("schoolAlertForm").addEventListener("submit",async e=>{
+    e.preventDefault();const msg=$("s_msg"),email=$("s_email").value.trim();
+    const districts=[...document.querySelectorAll('#schoolAlertForm input[name="district"]:checked')].map(i=>i.value);
+    if(!EMAIL_OK(email)){msg.textContent="Please enter a valid email address.";msg.className="gmsg err";return;}
+    if(!districts.length){msg.textContent="Pick at least one school district.";msg.className="gmsg err";return;}
+    const btn=$("s_send");btn.disabled=true;btn.textContent="Signing you up…";
+    const r=await postSignup({kind:"schools",email,name:$("s_name").value.trim(),districts,website:$("s_web").value,t:sStart});
+    btn.disabled=false;btn.textContent="Send me school alerts";
+    if(r.ok){msg.textContent="You're signed up! Check your inbox for a confirmation.";msg.className="gmsg ok";store.set("guideContact",{name:$("s_name").value.trim(),email});if(window.gtag)gtag("event","school_alerts_signup",{districts:districts.join(", ")});}
+    else{msg.innerHTML=`That didn't go through. Please try again, or email <a href="mailto:christina@northernutahhomeguide.com">christina@northernutahhomeguide.com</a>.`;msg.className="gmsg err";}
+  });
+}
+
+// ---------------------------------------------------------------------------
+// "Which town fits you?" quiz
+// ---------------------------------------------------------------------------
+if(document.getElementById("quiz")&&TOWNS.length){
+  const qStart=Date.now();
+  const popOf=t=>{const m=/([\d,]+)/.exec(String(t.population||""));return m?parseInt(m[1].replace(/,/g,""),10):0};
+  const val=n=>{const el=document.querySelector(`#quiz [name="${n}"]:checked`);return el?el.value:""};
+  const vals=n=>[...document.querySelectorAll(`#quiz [name="${n}"]:checked`)].map(i=>i.value);
+  document.querySelectorAll('#quiz [name="commute"]').forEach(r=>r.addEventListener("change",()=>{$("q_limit_wrap").hidden=val("commute")==="none";}));
+  let last=null;
+  function score(){
+    const to=val("commute"),limit=+val("limit")||40,size=val("size"),want=vals("outdoors"),schools=val("schools");
+    return TOWNS.map(t=>{
+      let s=0;const why=[];
+      if(to&&to!=="none"){const m=t.commute&&t.commute[to];
+        if(m==null)s-=2;else if(m<=limit){s+=4;why.push(m<=3?`in ${to}`:`~${m} min to ${to}`);}else if(m<=limit+15){s+=1;why.push(`~${m} min to ${to}`);}else s-=4;}
+      const p=popOf(t),band=p<5000?"small":p<20000?"mid":"city";
+      if(size&&size!=="any"){if(band===size){s+=2;why.push(band==="small"?"small-town feel":band==="mid"?"mid-size town":"city amenities");}else if(Math.abs(["small","mid","city"].indexOf(band)-["small","mid","city"].indexOf(size))===1)s+=0.5;}
+      const near=nearby(t,40);
+      const lake=near.find(o=>o.type==="lake"),ski=near.find(o=>o.type==="ski"),trails=near.filter(o=>o.type==="trail"&&o.d<=10).length;
+      if(want.includes("lake")&&lake){if(lake.d<=12){s+=2;why.push(`${lake.name} ~${Math.max(1,Math.round(lake.d))} mi`);}else if(lake.d<=25)s+=1;}
+      if(want.includes("ski")&&ski){if(ski.d<=20){s+=2;why.push(`${ski.name} ~${Math.max(1,Math.round(ski.d))} mi`);}else if(ski.d<=35)s+=1;}
+      if(want.includes("trails")&&trails){s+=Math.min(2,trails/2);if(trails>=2)why.push(`${trails} trails within 10 mi`);}
+      const sc=t.schools||{},nSch=["elementary","middle","high"].reduce((n,k)=>n+((sc[k]||[]).length),0);
+      if(schools==="in-town"){if(nSch>0){s+=1.5;why.push("public schools in town");}else s-=1;}
+      return {t,s,why};
+    }).sort((a,b)=>b.s-a.s||popOf(b.t)-popOf(a.t)).slice(0,5);
+  }
+  $("quiz").addEventListener("submit",e=>{
+    e.preventDefault();
+    if(!val("commute")||!val("size")){$("q_err").textContent="Answer the commute and town-size questions to see your matches.";return;}
+    $("q_err").textContent="";
+    last=score();
+    $("q_list").innerHTML=last.map((r,i)=>{const pg=PAGE_OF[r.t.name];const href=pg?`${ROOT}${pg}#${r.t.name.toLowerCase().replace(/[^a-z0-9]+/g,"-")}`:`${ROOT}areas/`;
+      return `<li class="qres"><span class="qn">${i+1}</span><div><a class="qt" href="${href}">${esc(r.t.name)}</a><span class="note">${esc(r.t.region)}</span>${r.why.length?`<div class="qwhy">${r.why.slice(0,4).map(esc).join(" · ")}</div>`:""}</div></li>`;}).join("");
+    $("q_results").hidden=false;$("q_results").scrollIntoView({behavior:"smooth",block:"start"});
+    if(window.gtag)gtag("event","town_quiz_done",{top_town:last[0].t.name});
+  });
+  $("q_lead").addEventListener("submit",async e=>{
+    e.preventDefault();const msg=$("q_msg"),email=$("q_email").value.trim();
+    if(!last)return;
+    if(!EMAIL_OK(email)){msg.textContent="Please enter a valid email address.";msg.className="gmsg err";return;}
+    const answers={commute:val("commute"),limit:val("commute")==="none"?"":val("limit"),size:val("size"),outdoors:vals("outdoors"),schools:val("schools"),budget:$("q_budget").value,timeline:$("q_timeline").value};
+    const btn=$("q_send");btn.disabled=true;btn.textContent="Sending…";
+    const r=await postSignup({kind:"quiz",email,name:$("q_name").value.trim(),phone:$("q_phone").value.trim(),consent:$("q_ok").checked,answers,matches:last.map(x=>x.t.name),website:$("q_web").value,t:qStart});
+    btn.disabled=false;btn.textContent="Send me Christina's picks";
+    if(r.ok){msg.textContent="Sent! Your matches are on their way to your inbox, and Christina will follow up personally.";msg.className="gmsg ok";store.set("guideContact",{name:$("q_name").value.trim(),email});if(window.gtag)gtag("event","town_quiz_lead",{top_town:last[0].t.name});}
+    else{msg.innerHTML=`That didn't go through. Please try again, or call or text <a href="tel:+14359945449">(435) 994-5449</a>.`;msg.className="gmsg err";}
+  });
+  const saved=store.get("guideContact")||{};if(saved.email)$("q_email").value=saved.email;if(saved.name)$("q_name").value=saved.name;
+}
