@@ -76,18 +76,58 @@ const kx=Math.cos(41.6*Math.PI/180), W=560, H=420;
 const sc=Math.min((W-40)/((maxLng-minLng)*kx),(H-40)/(maxLat-minLat));
 const offX=(W-(maxLng-minLng)*kx*sc)/2, offY=(H-(maxLat-minLat)*sc)/2;
 const px=t=>[offX+(t.lng-minLng)*kx*sc, offY+(maxLat-t.lat)*sc];
+// Map view: zoom/pan by changing the SVG viewBox. Dots and labels keep the same on-screen size.
+const MAP_W=560,MAP_H=420;let vb={x:0,y:0,w:MAP_W,h:MAP_H};
 function renderMap(){
-  const show=new Set(filtered().map(t=>t.name));
+  const show=new Set(filtered().map(t=>t.name)),k=MAP_W/vb.w,zoomed=k>1.01,names=k>=2.2;
+  $("map").setAttribute("viewBox",`${vb.x} ${vb.y} ${vb.w} ${vb.h}`);
   const regLbl=[["Cache Valley",41.86,-111.62],["Bear Lake",41.95,-111.28],["Box Elder",41.9,-112.55],["Ogden & Weber",41.14,-111.72]];
-  let s=regLbl.map(([n,la,ln])=>{const [x,y]=px({lat:la,lng:ln});return `<text class="reg" x="${x}" y="${y}" text-anchor="middle">${n}</text>`}).join("");
+  let s=regLbl.map(([n,la,ln])=>{const [x,y]=px({lat:la,lng:ln});return `<text class="reg" x="${x}" y="${y}" text-anchor="middle" style="font-size:${15/k}px">${n}</text>`}).join("");
   const order=TOWNS.slice().sort((a,b)=>(a.name===selected)-(b.name===selected));
   s+=order.map(t=>{const [x,y]=px(t);const on=show.has(t.name), sel=t.name===selected;
-    return `<g class="t" data-t="${esc(t.name)}" tabindex="${on?0:-1}" role="button" aria-label="${esc(t.name)}" opacity="${on?1:.18}"><title>${esc(t.name)}</title><circle cx="${x}" cy="${y}" r="${sel?8:5}" fill="${regionColor(t.region)}" ${sel?'stroke="var(--ink)" stroke-width="2"':''}/>${sel?`<text class="lbl" x="${x+12}" y="${y+4}">${esc(t.name)}</text>`:""}</g>`}).join("");
+    return `<g class="t" data-t="${esc(t.name)}" tabindex="${on?0:-1}" role="button" aria-label="${esc(t.name)}" opacity="${on?1:.18}"><title>${esc(t.name)}</title><circle cx="${x}" cy="${y}" r="${(sel?8:5)/k}" fill="${regionColor(t.region)}" style="stroke-width:${(sel?2:1.5)/k}px" ${sel?'stroke="var(--ink)"':''}/>${sel||(names&&on)?`<text class="lbl${sel?"":" lbl-sm"}" x="${x+(sel?12:8)/k}" y="${y+4/k}" style="font-size:${(sel?11:10)/k}px;stroke-width:${3/k}px">${esc(t.name)}</text>`:""}</g>`}).join("");
   $("map").innerHTML=s;
+  const w=$("map").parentElement;if(w&&w.classList.contains("mapwrap")){w.classList.toggle("zoomed",zoomed);$("mapReset").hidden=!zoomed;$("mapOut").disabled=!zoomed;$("mapIn").disabled=k>=7.9;}
 }
+(function(){
+  const svg=$("map");
+  const wrap=document.createElement("div");wrap.className="mapwrap";svg.parentNode.insertBefore(wrap,svg);wrap.appendChild(svg);
+  wrap.insertAdjacentHTML("beforeend",`<div class="mapctl" role="group" aria-label="Map zoom"><button type="button" id="mapIn" aria-label="Zoom in">+</button><button type="button" id="mapOut" aria-label="Zoom out">−</button></div><button type="button" class="mapreset" id="mapReset" hidden>⤢ Full map</button><p class="maphint">Pinch or use + to zoom · drag to move</p>`);
+  const clamp=v=>{const w=Math.min(MAP_W,Math.max(MAP_W/8,v.w)),h=w*MAP_H/MAP_W;return {w,h,x:Math.min(MAP_W-w,Math.max(0,v.x)),y:Math.min(MAP_H-h,Math.max(0,v.y))};};
+  const toSvg=(cx,cy)=>{const r=svg.getBoundingClientRect();return [vb.x+(cx-r.left)/r.width*vb.w, vb.y+(cy-r.top)/r.height*vb.h];};
+  function zoomAt(f,sx,sy){if(sx==null){sx=vb.x+vb.w/2;sy=vb.y+vb.h/2;}const w=vb.w/f,h=vb.h/f;vb=clamp({w,h,x:sx-(sx-vb.x)/f,y:sy-(sy-vb.y)/f});renderMap();}
+  $("mapIn").addEventListener("click",()=>zoomAt(1.6));
+  $("mapOut").addEventListener("click",()=>zoomAt(1/1.6));
+  $("mapReset").addEventListener("click",()=>{vb={x:0,y:0,w:MAP_W,h:MAP_H};renderMap();});
+  // Trackpad pinch and Ctrl/Cmd + wheel arrive as wheel events with ctrlKey: zoom the map, not the page.
+  svg.addEventListener("wheel",e=>{if(!e.ctrlKey&&!e.metaKey)return;e.preventDefault();const [sx,sy]=toSvg(e.clientX,e.clientY);zoomAt(Math.exp(-e.deltaY*0.01),sx,sy);},{passive:false});
+  // Double-click / double-tap zooms in there. (Done by hand: selecting a town redraws the map between clicks.)
+  let lastClick={t:0,x:0,y:0};
+  svg.addEventListener("click",e=>{if(e.pointerType==="touch")return;const now=Date.now();
+    if(now-lastClick.t<350&&Math.hypot(e.clientX-lastClick.x,e.clientY-lastClick.y)<10){const [sx,sy]=toSvg(e.clientX,e.clientY);zoomAt(2,sx,sy);lastClick={t:0,x:0,y:0};}
+    else lastClick={t:now,x:e.clientX,y:e.clientY};});
+  svg.addEventListener("dblclick",e=>e.preventDefault());
+  // Drag to pan (when zoomed) and two-finger pinch, with pointer events.
+  const pts=new Map();let start=null,moved=false,lastTap=0;
+  svg.addEventListener("pointerdown",e=>{pts.set(e.pointerId,{x:e.clientX,y:e.clientY});moved=false;
+    if(pts.size===2){const [p1,p2]=[...pts.values()];start={d:Math.hypot(p1.x-p2.x,p1.y-p2.y),vb:{...vb},c:toSvg((p1.x+p2.x)/2,(p1.y+p2.y)/2)};}
+    else start={x:e.clientX,y:e.clientY,vb:{...vb}};
+    if(e.pointerType==="touch"&&pts.size===1){const now=Date.now();if(now-lastTap<300){const [sx,sy]=toSvg(e.clientX,e.clientY);zoomAt(2,sx,sy);moved=true;}lastTap=now;}
+  });
+  svg.addEventListener("pointermove",e=>{if(!pts.has(e.pointerId)||!start)return;pts.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    const r=svg.getBoundingClientRect();
+    if(pts.size===2&&start.d){const [p1,p2]=[...pts.values()];const d=Math.hypot(p1.x-p2.x,p1.y-p2.y);const f=d/start.d;const w=start.vb.w/f,h=start.vb.h/f;const [cx,cy]=start.c;
+      vb=clamp({w,h,x:cx-(cx-start.vb.x)/f,y:cy-(cy-start.vb.y)/f});moved=true;renderMap();return;}
+    if(pts.size===1&&MAP_W/vb.w>1.01){const dx=e.clientX-start.x,dy=e.clientY-start.y;if(!moved&&Math.hypot(dx,dy)<4)return;moved=true;svg.setPointerCapture(e.pointerId);
+      vb=clamp({...start.vb,x:start.vb.x-dx/r.width*start.vb.w,y:start.vb.y-dy/r.height*start.vb.h});renderMap();}
+  });
+  const end=e=>{pts.delete(e.pointerId);if(pts.size===1){const p=[...pts.values()][0];start={x:p.x,y:p.y,vb:{...vb}};}else if(!pts.size)start=null;};
+  svg.addEventListener("pointerup",end);svg.addEventListener("pointercancel",end);
+  // A drag or pinch shouldn't also select the town under the finger.
+  svg.addEventListener("click",e=>{if(moved){e.stopImmediatePropagation();moved=false;}},true);
+})();
 $("map").addEventListener("click",e=>{const g=e.target.closest(".t");if(g&&g.getAttribute("opacity")!=="0.18")select(g.dataset.t,false)});
 $("map").addEventListener("keydown",e=>{if((e.key==="Enter"||e.key===" ")&&e.target.closest(".t")){e.preventDefault();select(e.target.closest(".t").dataset.t,false)}});
-
 function renderDetail(){
   const t=TOWNS.find(x=>x.name===selected); if(!t)return;
   const sc=t.schools||{};

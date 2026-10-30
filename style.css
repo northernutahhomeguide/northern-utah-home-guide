@@ -103,7 +103,7 @@ textarea{min-height:84px;resize:vertical}
 .map{width:100%;height:auto;display:block;border-radius:12px;background:var(--surface-2)}
 .map .t{cursor:pointer}
 .map .t circle{stroke:var(--surface);stroke-width:1.5;transition:r .15s}
-.map .t:hover circle{r:7}
+.map .t:hover circle{filter:brightness(1.25);stroke:var(--ink)}
 .map text{font-family:var(--body);fill:var(--ink);font-size:11px;pointer-events:none}
 .map .lbl{font-weight:700;paint-order:stroke;stroke:var(--surface-2);stroke-width:3px}
 .map .reg{font-family:var(--display);font-style:italic;font-size:15px;fill:var(--muted)}
@@ -480,3 +480,19 @@ form .gok{margin:2px 0}
 .whatsnew .wn-sub{font-size:.74rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--olive);margin:10px 0 6px;padding-top:8px;border-top:1px dashed color-mix(in srgb,var(--gold) 45%,var(--line))}
 .whatsnew .wn-h+.wn-sub{border-top:0;padding-top:0;margin-top:4px}
 .whatsnew ul.wn-up .wn-date{color:var(--olive)}
+
+/* zoomable town map */
+.mapwrap{position:relative}
+.mapwrap .map{touch-action:pan-x pan-y;user-select:none;-webkit-user-select:none}
+.mapwrap.zoomed .map{touch-action:none;cursor:grab}
+.mapwrap.zoomed .map:active{cursor:grabbing}
+.map .lbl-sm{font-weight:600}
+.mapctl{position:absolute;top:10px;right:10px;display:grid;border-radius:10px;overflow:hidden;box-shadow:var(--shadow);border:1px solid var(--line)}
+.mapctl button{width:36px;height:36px;border:0;background:var(--surface);color:var(--olive);font-size:1.3rem;font-weight:700;line-height:1;cursor:pointer}
+.mapctl button+button{border-top:1px solid var(--line)}
+.mapctl button:hover:not(:disabled){background:var(--gold-soft)}
+.mapctl button:disabled{color:var(--line);cursor:default}
+.mapreset{position:absolute;left:10px;top:10px;border:1px solid var(--olive);background:var(--olive);color:var(--hero-ink);font-weight:600;font-size:.85rem;padding:7px 12px;border-radius:999px;cursor:pointer;box-shadow:var(--shadow)}
+.mapreset:hover{background:var(--hero)}
+.maphint{position:absolute;left:10px;bottom:8px;margin:0;font-size:.72rem;color:var(--muted);background:color-mix(in srgb,var(--surface) 80%,transparent);padding:2px 8px;border-radius:999px;pointer-events:none}
+.mapwrap.zoomed .maphint{display:none}
