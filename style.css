@@ -475,3 +475,8 @@ form .gok{margin:2px 0}
 .qwhy{font-size:.92rem;color:var(--ink);margin-top:2px}
 .quizlead{display:grid;gap:12px;padding-top:6px;border-top:1px solid var(--line)}
 @media (max-width:600px){.quiz fieldset{padding:14px}.qopts label,.checks label{font-size:.9rem;padding:7px 11px}}
+
+/* "Coming up" events inside What's new */
+.whatsnew .wn-sub{font-size:.74rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--olive);margin:10px 0 6px;padding-top:8px;border-top:1px dashed color-mix(in srgb,var(--gold) 45%,var(--line))}
+.whatsnew .wn-h+.wn-sub{border-top:0;padding-top:0;margin-top:4px}
+.whatsnew ul.wn-up .wn-date{color:var(--olive)}
