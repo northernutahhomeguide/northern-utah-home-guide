@@ -119,9 +119,13 @@ function renderMap(){
     if(pts.size===2&&start.d){const [p1,p2]=[...pts.values()];const d=Math.hypot(p1.x-p2.x,p1.y-p2.y);const f=d/start.d;const w=start.vb.w/f,h=start.vb.h/f;const [cx,cy]=start.c;
       vb=clamp({w,h,x:cx-(cx-start.vb.x)/f,y:cy-(cy-start.vb.y)/f});moved=true;renderMap();return;}
     if(pts.size===1&&MAP_W/vb.w>1.01){const dx=e.clientX-start.x,dy=e.clientY-start.y;if(!moved&&Math.hypot(dx,dy)<4)return;moved=true;svg.setPointerCapture(e.pointerId);
-      vb=clamp({...start.vb,x:start.vb.x-dx/r.width*start.vb.w,y:start.vb.y-dy/r.height*start.vb.h});renderMap();}
+      vb=clamp({...start.vb,x:start.vb.x-dx/r.width*start.vb.w,y:start.vb.y-dy/r.height*start.vb.h});svg.setAttribute("viewBox",`${vb.x} ${vb.y} ${vb.w} ${vb.h}`);}
   });
   const end=e=>{pts.delete(e.pointerId);if(pts.size===1){const p=[...pts.values()][0];start={x:p.x,y:p.y,vb:{...vb}};}else if(!pts.size)start=null;};
+  // Phones (iPhone Safari especially): stop the page from scrolling or zooming while a finger moves the map.
+  svg.addEventListener("touchstart",e=>{if(e.touches.length>1)e.preventDefault();},{passive:false});
+  svg.addEventListener("touchmove",e=>{if(e.touches.length>1||MAP_W/vb.w>1.01)e.preventDefault();},{passive:false});
+  svg.addEventListener("gesturestart",e=>e.preventDefault());
   svg.addEventListener("pointerup",end);svg.addEventListener("pointercancel",end);
   // A drag or pinch shouldn't also select the town under the finger.
   svg.addEventListener("click",e=>{if(moved){e.stopImmediatePropagation();moved=false;}},true);
