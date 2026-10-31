@@ -344,6 +344,7 @@ $("valueForm").addEventListener("submit",async e=>{
     $("v_note").textContent="Sent! Christina will get back to you within one business day.";
     $("v_copy").hidden=true;
     $("valueForm").querySelectorAll("input,textarea").forEach(el=>{if(el.id!=="v_web")el.value=""});$("v_ok").checked=false;
+    location.href=ROOT+"thanks-christina?type=value";return;
   }else{
     $("v_note").textContent="It didn't go through. Copy your request and text or email it to the number or address above.";
     $("v_copy").hidden=false;
@@ -375,7 +376,7 @@ $("askForm").addEventListener("submit",async e=>{
   try{const r=await fetch(API_ORIGIN+"/api/value",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({name:v("a_name"),contact:v("a_contact"),type:"Question: "+v("a_topic"),when:"",addr:"",msg:(v("a_town")?"Town: "+v("a_town")+"\n":"")+v("a_msg"),source:"ask",town:v("a_town"),topic:v("a_topic"),consent:$("a_ok").checked,website:$("a_web").value,t:aStart,page:location.href})});ok=r.ok&&(await r.json()).ok;}catch(_){ok=false}
   btn.disabled=false;btn.textContent=label;
   $("a_done").hidden=false;
-  if(ok){$("a_note").textContent="Sent! I'll get back to you within one business day.";$("askForm").querySelectorAll("input,textarea").forEach(el=>{if(el.id!=="a_web")el.value=""});$("a_ok").checked=false;}
+  if(ok){$("a_note").textContent="Sent! I'll get back to you within one business day.";$("askForm").querySelectorAll("input,textarea").forEach(el=>{if(el.id!=="a_web")el.value=""});$("a_ok").checked=false;location.href=ROOT+"thanks-christina?type=ask";return;}
   else{$("a_note").innerHTML=`It didn't go through. Please text or call <a href="tel:+14359945449">(435) 994-5449</a> or email <a href="mailto:christina@northernutahhomeguide.com">christina@northernutahhomeguide.com</a>.`;}
 });
 }
@@ -433,6 +434,7 @@ async function send(e){
     msg.innerHTML=`Sent! Check your inbox for ${cur.kind==="compare"?"the comparison":`the ${esc(cur.towns[0])} guide`} (and your spam folder, just in case).`;msg.className="gmsg ok";
     $("g_send").textContent="Sent";
     if(window.gtag)gtag("event","guide_email",{guide_kind:cur.kind,guide_towns:cur.towns.join(" vs "),follow_up:consent?"yes":"no"});
+    setTimeout(()=>{location.href=ROOT+"thanks-sent?type=guide"},300);
   }else{
     msg.innerHTML=err==="email"?"Please check your email address.":err==="busy"?"Too many requests from this connection. Please try again in a little while.":`That didn't go through. Please try again, or call or text Christina at <a href="tel:+14359945449">(435) 994-5449</a>.`;
     msg.className="gmsg err";$("g_send").disabled=false;$("g_send").textContent="Send it";
@@ -524,7 +526,7 @@ function chipPicker(el,preselect){
       const body={kind:"listings",email,name:$("l_name").value.trim(),towns:getTowns(),website:$("l_web").value,t:started};
       window.open(href,"_blank","noopener");   // open the listings now, while the click still counts as the visitor's
       dlg.close();
-      postSignup(body).then(r=>{if(window.gtag)gtag("event","listing_alerts_signup",{towns:body.towns.join(", ")||"any",ok:r.ok?"yes":"no"});});
+      postSignup(body).then(r=>{if(window.gtag)gtag("event","listing_alerts_signup",{towns:body.towns.join(", ")||"any",ok:r.ok?"yes":"no"});if(r.ok)setTimeout(()=>{location.href=ROOT+"thanks-sent?type=listings"},300);});
     });
   }
   document.addEventListener("click",e=>{
@@ -552,7 +554,7 @@ if(document.getElementById("schoolAlertForm")){
     const btn=$("s_send");btn.disabled=true;btn.textContent="Signing you up…";
     const r=await postSignup({kind:"schools",email,name:$("s_name").value.trim(),districts,website:$("s_web").value,t:sStart});
     btn.disabled=false;btn.textContent="Send me school alerts";
-    if(r.ok){msg.textContent="You're signed up! Check your inbox for a confirmation.";msg.className="gmsg ok";store.set("guideContact",{name:$("s_name").value.trim(),email});if(window.gtag)gtag("event","school_alerts_signup",{districts:districts.join(", ")});}
+    if(r.ok){msg.textContent="You're signed up! Check your inbox for a confirmation.";msg.className="gmsg ok";store.set("guideContact",{name:$("s_name").value.trim(),email});if(window.gtag)gtag("event","school_alerts_signup",{districts:districts.join(", ")});setTimeout(()=>{location.href=ROOT+"thanks-sent?type=alerts"},300);}
     else{msg.innerHTML=`That didn't go through. Please try again, or email <a href="mailto:christina@northernutahhomeguide.com">christina@northernutahhomeguide.com</a>.`;msg.className="gmsg err";}
   });
 }
@@ -603,7 +605,7 @@ if(document.getElementById("quiz")&&TOWNS.length){
     const btn=$("q_send");btn.disabled=true;btn.textContent="Sending…";
     const r=await postSignup({kind:"quiz",email,name:$("q_name").value.trim(),phone:$("q_phone").value.trim(),consent:$("q_ok").checked,answers,matches:last.map(x=>x.t.name),website:$("q_web").value,t:qStart});
     btn.disabled=false;btn.textContent="Send me Christina's picks";
-    if(r.ok){msg.textContent="Sent! Your matches are on their way to your inbox, and Christina will follow up personally.";msg.className="gmsg ok";store.set("guideContact",{name:$("q_name").value.trim(),email});if(window.gtag)gtag("event","town_quiz_lead",{top_town:last[0].t.name});}
+    if(r.ok){msg.textContent="Sent! Your matches are on their way to your inbox, and Christina will follow up personally.";msg.className="gmsg ok";store.set("guideContact",{name:$("q_name").value.trim(),email});if(window.gtag)gtag("event","town_quiz_lead",{top_town:last[0].t.name});setTimeout(()=>{location.href=ROOT+"thanks-sent?type=quiz"},300);}
     else{msg.innerHTML=`That didn't go through. Please try again, or call or text <a href="tel:+14359945449">(435) 994-5449</a>.`;msg.className="gmsg err";}
   });
   const saved=store.get("guideContact")||{};if(saved.email)$("q_email").value=saved.email;if(saved.name)$("q_name").value=saved.name;
