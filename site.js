@@ -1,3 +1,6 @@
+(function(){
+if(window.__nuhgSite)return;
+window.__nuhgSite=1;
 const TOWNS = window.SITE_TOWNS||[];
 const OUTDOORS = window.SITE_OUTDOORS||[];
 const PAGE_OF = window.SITE_PAGES||{};
@@ -14,6 +17,32 @@ const regionColor = r => (REGIONS.find(x=>x.key===r)||REGIONS[0]).color;
 const esc = s => String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const $ = id => document.getElementById(id);
 const store = {get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+function formExtras(){
+  let attribution={}, page="";
+  try{
+    if(window.NUHG){
+      if(typeof window.NUHG.forForm==="function") attribution=window.NUHG.forForm()||{};
+      if(typeof window.NUHG.submitPage==="function") page=window.NUHG.submitPage(location.href)||"";
+    }
+  }catch(e){}
+  if(!page){try{page=String(location.href||"").split("#")[0];}catch(e){page="";}}
+  return {attribution,page};
+}
+function trackAccepted(formName,followUp,honeypot,response,done){
+  try{
+    if(window.NUHG&&typeof window.NUHG.trackAccepted==="function"){
+      window.NUHG.trackAccepted(window,formName,{followUp:!!followUp,honeypot:honeypot},response,done);
+      return;
+    }
+  }catch(e){}
+  if(typeof done==="function"){try{done();}catch(err){}}
+}
+function goTo(url){
+  try{
+    if(typeof window.__nuhgGo==="function"){window.__nuhgGo(url);return;}
+    location.href=url;
+  }catch(e){}
+}
 
 document.querySelectorAll("a.kw").forEach(a=>a.href=KW_URL);
 TOWNS.sort((a,b)=>a.name.localeCompare(b.name));
@@ -331,12 +360,15 @@ $("valueForm").addEventListener("submit",async e=>{
   const v=id=>$(id).value.trim();
   if(!v("v_name")||!v("v_contact")){$("v_err").textContent="Add your name and a phone number or email so I can reach you.";return;}
   $("v_err").textContent="";
+  const consent=$("v_ok").checked, honeypot=$("v_web")?$("v_web").value:"";
   const summaryText=`Hi Christina, this is ${v("v_name")}.\nI'm looking to: ${v("v_type")} (${v("v_when")})\n${v("v_addr")?"Property: "+v("v_addr")+"\n":""}${v("v_msg")?v("v_msg")+"\n":""}Best way to reach me: ${v("v_contact")}`;
-  const btn=$("v_send");btn.disabled=true;const label=btn.textContent;btn.textContent="Sending…";
-  let ok=false;
+  const btn=$("v_send");if(btn.disabled)return;btn.disabled=true;const label=btn.textContent;btn.textContent="Sending…";
+  let ok=false, json={};
   try{
-    const r=await fetch(API_ORIGIN+"/api/value",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({name:v("v_name"),contact:v("v_contact"),addr:v("v_addr"),type:v("v_type"),when:v("v_when"),msg:v("v_msg"),source:"value",consent:$("v_ok").checked,website:$("v_web")?$("v_web").value:"",t:vStart,page:location.href})});
-    ok=r.ok&&(await r.json()).ok;
+    const extra=formExtras();
+    const r=await fetch(API_ORIGIN+"/api/value",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({name:v("v_name"),contact:v("v_contact"),addr:v("v_addr"),type:v("v_type"),when:v("v_when"),msg:v("v_msg"),source:"value",consent:consent,website:honeypot,t:vStart,page:extra.page,attribution:extra.attribution})});
+    json=await r.json().catch(()=>({}));
+    ok=r.ok&&!!json.ok;
   }catch(_){ok=false}
   btn.disabled=false;btn.textContent=label;
   $("v_text").textContent=summaryText;
@@ -344,7 +376,8 @@ $("valueForm").addEventListener("submit",async e=>{
     $("v_note").textContent="Sent! Christina will get back to you within one business day.";
     $("v_copy").hidden=true;
     $("valueForm").querySelectorAll("input,textarea").forEach(el=>{if(el.id!=="v_web")el.value=""});$("v_ok").checked=false;
-    location.href=ROOT+"thanks-christina?type=value";return;
+    trackAccepted("home_value",consent,honeypot,json,()=>{setTimeout(()=>goTo(ROOT+"thanks-christina?type=value"),300);});
+    return;
   }else{
     $("v_note").textContent="It didn't go through. Copy your request and text or email it to the number or address above.";
     $("v_copy").hidden=false;
@@ -371,12 +404,13 @@ $("a_send").insertAdjacentHTML("beforebegin",'<label class="gok"><input type="ch
 $("askForm").addEventListener("submit",async e=>{
   e.preventDefault();const v=id=>$(id).value.trim();
   if(!v("a_name")||!v("a_contact")||!v("a_msg")){$("a_err").textContent="Add your name, a phone number or email, and your question.";return;}
-  $("a_err").textContent="";const btn=$("a_send");btn.disabled=true;const label=btn.textContent;btn.textContent="Sending…";
-  let ok=false;
-  try{const r=await fetch(API_ORIGIN+"/api/value",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({name:v("a_name"),contact:v("a_contact"),type:"Question: "+v("a_topic"),when:"",addr:"",msg:(v("a_town")?"Town: "+v("a_town")+"\n":"")+v("a_msg"),source:"ask",town:v("a_town"),topic:v("a_topic"),consent:$("a_ok").checked,website:$("a_web").value,t:aStart,page:location.href})});ok=r.ok&&(await r.json()).ok;}catch(_){ok=false}
+  $("a_err").textContent="";const btn=$("a_send");if(btn.disabled)return;btn.disabled=true;const label=btn.textContent;btn.textContent="Sending…";
+  const consent=$("a_ok").checked, honeypot=$("a_web").value;
+  let ok=false, json={};
+  try{const extra=formExtras();const r=await fetch(API_ORIGIN+"/api/value",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({name:v("a_name"),contact:v("a_contact"),type:"Question: "+v("a_topic"),when:"",addr:"",msg:(v("a_town")?"Town: "+v("a_town")+"\n":"")+v("a_msg"),source:"ask",town:v("a_town"),topic:v("a_topic"),consent:consent,website:honeypot,t:aStart,page:extra.page,attribution:extra.attribution})});json=await r.json().catch(()=>({}));ok=r.ok&&!!json.ok;}catch(_){ok=false}
   btn.disabled=false;btn.textContent=label;
   $("a_done").hidden=false;
-  if(ok){$("a_note").textContent="Sent! I'll get back to you within one business day.";$("askForm").querySelectorAll("input,textarea").forEach(el=>{if(el.id!=="a_web")el.value=""});$("a_ok").checked=false;location.href=ROOT+"thanks-christina?type=ask";return;}
+  if(ok){$("a_note").textContent="Sent! I'll get back to you within one business day.";$("askForm").querySelectorAll("input,textarea").forEach(el=>{if(el.id!=="a_web")el.value=""});$("a_ok").checked=false;trackAccepted("ask_christina",consent,honeypot,json,()=>{setTimeout(()=>goTo(ROOT+"thanks-christina?type=ask"),300);});return;}
   else{$("a_note").innerHTML=`It didn't go through. Please text or call <a href="tel:+14359945449">(435) 994-5449</a> or email <a href="mailto:christina@northernutahhomeguide.com">christina@northernutahhomeguide.com</a>.`;}
 });
 }
@@ -425,16 +459,16 @@ async function send(e){
   const email=$("g_email").value.trim(),name=$("g_name").value.trim(),msg=$("g_msg");
   if(!/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(email)){msg.textContent="Please enter a valid email address.";msg.className="gmsg err";$("g_email").focus();return;}
   const consent=$("g_ok").checked;
+  if($("g_send").disabled)return;
   $("g_send").disabled=true;$("g_send").textContent="Sending…";msg.textContent="";
-  let ok=false,err="";
-  try{const r=await fetch(API,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({kind:cur.kind,towns:cur.towns,name,email,consent,website:$("g_web").value,t:start,page:location.href.split("#")[0]})});
-    const j=await r.json().catch(()=>({}));ok=r.ok&&j.ok;err=j.error||"";}catch(_){ok=false}
+  let ok=false,err="",json={};
+  try{const extra=formExtras();const r=await fetch(API,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({kind:cur.kind,towns:cur.towns,name,email,consent,website:$("g_web").value,t:start,page:extra.page,attribution:extra.attribution})});
+    json=await r.json().catch(()=>({}));ok=r.ok&&!!json.ok;err=json.error||"";}catch(_){ok=false}
   if(ok){
     store.set("guideContact",{name,email});
     msg.innerHTML=`Sent! Check your inbox for ${cur.kind==="compare"?"the comparison":`the ${esc(cur.towns[0])} guide`} (and your spam folder, just in case).`;msg.className="gmsg ok";
     $("g_send").textContent="Sent";
-    if(window.gtag)gtag("event","guide_email",{guide_kind:cur.kind,guide_towns:cur.towns.join(" vs "),follow_up:consent?"yes":"no"});
-    setTimeout(()=>{location.href=ROOT+"thanks-sent?type=guide"},300);
+    trackAccepted(cur.kind==="compare"?"town_comparison":"town_guide",consent,$("g_web").value,json,()=>{setTimeout(()=>goTo(ROOT+"thanks-sent?type=guide"),300);});
   }else{
     msg.innerHTML=err==="email"?"Please check your email address.":err==="busy"?"Too many requests from this connection. Please try again in a little while.":`That didn't go through. Please try again, or call or text Christina at <a href="tel:+14359945449">(435) 994-5449</a>.`;
     msg.className="gmsg err";$("g_send").disabled=false;$("g_send").textContent="Send it";
@@ -471,8 +505,8 @@ const ALL_TOWNS=["Amalga","Brigham City","Clarkston","Cornish","Eden","Farr West
 const MAIN_TOWNS=["Logan","North Logan","Hyde Park","Smithfield","Providence","Brigham City","Ogden","North Ogden","Garden City","Huntsville"];
 const EMAIL_OK=s=>/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(s);
 async function postSignup(body){
-  try{const r=await fetch(API_ORIGIN+"/api/signup",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(Object.assign({page:location.href.split("#")[0]},body))});
-    const j=await r.json().catch(()=>({}));return {ok:r.ok&&j.ok,error:j.error||""};}catch(_){return {ok:false,error:""}}
+  try{const extra=formExtras();const r=await fetch(API_ORIGIN+"/api/signup",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(Object.assign({},body,{page:extra.page,attribution:extra.attribution}))});
+    const j=await r.json().catch(()=>({}));return {ok:!!(r.ok&&j.ok),accepted:j.accepted===true,repeat:j.repeat===true,retained:j.retained,error:j.error||""};}catch(_){return {ok:false,accepted:false,repeat:false,error:""}}
 }
 const chip=(n,on)=>`<button type="button" class="tchip" aria-pressed="${on?"true":"false"}" data-town="${esc(n)}">${esc(n)}</button>`;
 function chipPicker(el,preselect){
@@ -522,11 +556,13 @@ function chipPicker(el,preselect){
       e.preventDefault();
       const email=$("l_email").value.trim(),msg=$("l_msg");
       if(!EMAIL_OK(email)){msg.textContent="Please enter a valid email, or tap “No thanks” to go straight to the listings.";msg.className="gmsg err";$("l_email").focus();return;}
+      if($("l_send").disabled)return;
+      $("l_send").disabled=true;
       mark("yes");store.set("guideContact",{name:$("l_name").value.trim(),email});
       const body={kind:"listings",email,name:$("l_name").value.trim(),towns:getTowns(),website:$("l_web").value,t:started};
       window.open(href,"_blank","noopener");   // open the listings now, while the click still counts as the visitor's
       dlg.close();
-      postSignup(body).then(r=>{if(window.gtag)gtag("event","listing_alerts_signup",{towns:body.towns.join(", ")||"any",ok:r.ok?"yes":"no"});if(r.ok)setTimeout(()=>{location.href=ROOT+"thanks-sent?type=listings"},300);});
+      postSignup(body).then(r=>{trackAccepted("listing_alerts",true,body.website,r,()=>{if(r.ok)setTimeout(()=>goTo(ROOT+"thanks-sent?type=listings"),300);});});
     });
   }
   document.addEventListener("click",e=>{
@@ -551,10 +587,11 @@ if(document.getElementById("schoolAlertForm")){
     const districts=[...document.querySelectorAll('#schoolAlertForm input[name="district"]:checked')].map(i=>i.value);
     if(!EMAIL_OK(email)){msg.textContent="Please enter a valid email address.";msg.className="gmsg err";return;}
     if(!districts.length){msg.textContent="Pick at least one school district.";msg.className="gmsg err";return;}
-    const btn=$("s_send");btn.disabled=true;btn.textContent="Signing you up…";
-    const r=await postSignup({kind:"schools",email,name:$("s_name").value.trim(),districts,website:$("s_web").value,t:sStart});
+    const btn=$("s_send");if(btn.disabled)return;btn.disabled=true;btn.textContent="Signing you up…";
+    const honeypot=$("s_web").value;
+    const r=await postSignup({kind:"schools",email,name:$("s_name").value.trim(),districts,website:honeypot,t:sStart});
     btn.disabled=false;btn.textContent="Send me school alerts";
-    if(r.ok){msg.textContent="You're signed up! Check your inbox for a confirmation.";msg.className="gmsg ok";store.set("guideContact",{name:$("s_name").value.trim(),email});if(window.gtag)gtag("event","school_alerts_signup",{districts:districts.join(", ")});setTimeout(()=>{location.href=ROOT+"thanks-sent?type=alerts"},300);}
+    if(r.ok){msg.textContent="You're signed up! Check your inbox for a confirmation.";msg.className="gmsg ok";store.set("guideContact",{name:$("s_name").value.trim(),email});trackAccepted("school_alerts",true,honeypot,r,()=>{setTimeout(()=>goTo(ROOT+"thanks-sent?type=alerts"),300);});}
     else{msg.innerHTML=`That didn't go through. Please try again, or email <a href="mailto:christina@northernutahhomeguide.com">christina@northernutahhomeguide.com</a>.`;msg.className="gmsg err";}
   });
 }
@@ -594,19 +631,22 @@ if(document.getElementById("quiz")&&TOWNS.length){
     last=score();
     $("q_list").innerHTML=last.map((r,i)=>{const pg=PAGE_OF[r.t.name];const href=pg?`${ROOT}${pg}#${r.t.name.toLowerCase().replace(/[^a-z0-9]+/g,"-")}`:`${ROOT}areas/`;
       return `<li class="qres"><span class="qn">${i+1}</span><div><a class="qt" href="${href}">${esc(r.t.name)}</a><span class="note">${esc(r.t.region)}</span>${r.why.length?`<div class="qwhy">${r.why.slice(0,4).map(esc).join(" · ")}</div>`:""}</div></li>`;}).join("");
-    $("q_results").hidden=false;$("q_results").scrollIntoView({behavior:"smooth",block:"start"});
-    if(window.gtag)gtag("event","town_quiz_done",{top_town:last[0].t.name});
+    $("q_results").hidden=false;
+    try{$("q_results").scrollIntoView({behavior:"smooth",block:"start"});}catch(e){}
+    if(window.gtag)window.gtag("event","town_quiz_done",{top_town:last[0].t.name});
   });
   $("q_lead").addEventListener("submit",async e=>{
     e.preventDefault();const msg=$("q_msg"),email=$("q_email").value.trim();
     if(!last)return;
     if(!EMAIL_OK(email)){msg.textContent="Please enter a valid email address.";msg.className="gmsg err";return;}
     const answers={commute:val("commute"),limit:val("commute")==="none"?"":val("limit"),size:val("size"),outdoors:vals("outdoors"),schools:val("schools"),budget:$("q_budget").value,timeline:$("q_timeline").value};
-    const btn=$("q_send");btn.disabled=true;btn.textContent="Sending…";
-    const r=await postSignup({kind:"quiz",email,name:$("q_name").value.trim(),phone:$("q_phone").value.trim(),consent:$("q_ok").checked,answers,matches:last.map(x=>x.t.name),website:$("q_web").value,t:qStart});
+    const btn=$("q_send");if(btn.disabled)return;btn.disabled=true;btn.textContent="Sending…";
+    const consent=$("q_ok").checked, honeypot=$("q_web").value;
+    const r=await postSignup({kind:"quiz",email,name:$("q_name").value.trim(),phone:$("q_phone").value.trim(),consent:consent,answers,matches:last.map(x=>x.t.name),website:honeypot,t:qStart});
     btn.disabled=false;btn.textContent="Send me Christina's picks";
-    if(r.ok){msg.textContent="Sent! Your matches are on their way to your inbox, and Christina will follow up personally.";msg.className="gmsg ok";store.set("guideContact",{name:$("q_name").value.trim(),email});if(window.gtag)gtag("event","town_quiz_lead",{top_town:last[0].t.name});setTimeout(()=>{location.href=ROOT+"thanks-sent?type=quiz"},300);}
+    if(r.ok){msg.textContent="Sent! Your matches are on their way to your inbox, and Christina will follow up personally.";msg.className="gmsg ok";store.set("guideContact",{name:$("q_name").value.trim(),email});trackAccepted("town_quiz",consent,honeypot,r,()=>{setTimeout(()=>goTo(ROOT+"thanks-sent?type=quiz"),300);});}
     else{msg.innerHTML=`That didn't go through. Please try again, or call or text <a href="tel:+14359945449">(435) 994-5449</a>.`;msg.className="gmsg err";}
   });
   const saved=store.get("guideContact")||{};if(saved.email)$("q_email").value=saved.email;if(saved.name)$("q_name").value=saved.name;
 }
+})();

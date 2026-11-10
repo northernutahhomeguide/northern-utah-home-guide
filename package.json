@@ -1,0 +1,10 @@
+{
+  "name": "northern-utah-home-guide",
+  "private": true,
+  "scripts": {
+    "test": "node --test tests/source-tracking.test.js"
+  },
+  "devDependencies": {
+    "jsdom": "^25.0.1"
+  }
+}
